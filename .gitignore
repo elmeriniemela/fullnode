@@ -1,0 +1,12 @@
+
+.Trash-1000
+bitcoin-blockchain-datadir/blocks
+bitcoin-blockchain-datadir/chainstate
+bitcoin-blockchain-datadir/.lock
+bitcoin-blockchain-datadir/bitcoind.pid
+bitcoin-blockchain-datadir/debug.log
+bitcoin-blockchain-datadir/fee_estimates.dat
+bitcoin-blockchain-datadir/mempool.dat
+bitcoin-blockchain-datadir/peers.dat
+
+
