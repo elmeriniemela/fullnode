@@ -1,6 +1,10 @@
 
 .Trash-1000
+bitcoin-blockchain-datadir/electrum_db
 bitcoin-blockchain-datadir/blocks
+bitcoin-blockchain-datadir/indexes
+bitcoin-blockchain-datadir/anchors.dat
+bitcoin-blockchain-datadir/.cookie
 bitcoin-blockchain-datadir/chainstate
 bitcoin-blockchain-datadir/.lock
 bitcoin-blockchain-datadir/bitcoind.pid
