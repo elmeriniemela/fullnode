@@ -15,6 +15,12 @@
 * `cd electrumx/`
 * `pip3 install .`
 
+
+## Config:
+* `bitcoin-blockchain-datadir/bitcoin.conf`
+* `bitcoin-blockchain-datadir/electrumx.env`
+
+
 ## Usage:
 * `./electrumx_start.sh`
 * `./electrumx_stop.sh`
