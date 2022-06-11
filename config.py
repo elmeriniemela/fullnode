@@ -7,7 +7,7 @@ bitcoin = {
     'txindex': 1,
     'networkactive': 1, # Enable all P2P network activity (default: 1). Can be changed by the setnetworkactive RPC command
     'listen': 1,
-    'bind': '127.0.0.1',
+    'bind': '0.0.0.0',
     'port': 8333,
     'maxconnections': 64,
     'dbcache': 64,
