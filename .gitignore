@@ -12,5 +12,6 @@ bitcoin-blockchain-datadir/debug.log
 bitcoin-blockchain-datadir/fee_estimates.dat
 bitcoin-blockchain-datadir/mempool.dat
 bitcoin-blockchain-datadir/peers.dat
-
+bitcoin-blockchain-datadir/bitcoin.conf
+bitcoin-blockchain-datadir/electrumx.env
 

@@ -1,25 +1,14 @@
-
-
-## Verify:
-* `sha256sum --ignore-missing --check SHA256SUMS`
-* `gpg --keyserver hkps://keys.openpgp.org --recv-keys E777299FC265DD04793070EB944D35F9AC3DB76A`
-* `gpg --verify SHA256SUMS.asc`
-
-
+## Cofigure bitcoind and electrumx
+* `./config.py`
+* `cat bitcoin-blockchain-datadir/bitcoin.conf`
+* `cat bitcoin-blockchain-datadir/electrumx.env`
 
 ## Run bitcoind before starting electrumx:
 * `./bitcoind.sh`
 
-
 ## Install electrumx dependencies:
 * `cd electrumx/`
 * `pip3 install .`
-
-
-## Config:
-* `bitcoin-blockchain-datadir/bitcoin.conf`
-* `bitcoin-blockchain-datadir/electrumx.env`
-
 
 ## Usage:
 * `./electrumx_start.sh`
