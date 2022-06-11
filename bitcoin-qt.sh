@@ -1,1 +1,1 @@
-./bitcoin-core/bin/bitcoin-qt -datadir=bitcoin-blockchain-datadir -conf=bitcoin.conf $@
+./bitcoin/src/qt/bitcoin-qt -datadir=bitcoin-blockchain-datadir -conf=bitcoin.conf $@
