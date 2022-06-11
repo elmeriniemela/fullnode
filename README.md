@@ -1,3 +1,13 @@
+
+## Build bitcoind
+* `git submodule update --init`
+* `cd bitcoin`
+* `./autogen.sh`
+* `./configure`
+* `make`
+* Source: https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md
+
+
 ## Cofigure bitcoind and electrumx
 * `./config.py`
 * `cat bitcoin-blockchain-datadir/bitcoin.conf`
