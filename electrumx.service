@@ -1,0 +1,13 @@
+[Unit]
+Description=electrumx
+Requires=bitcoind.service
+After=bitcoind.service
+
+[Service]
+User=elmeri
+WorkingDirectory=/mnt/BitcoinCore
+ExecStart=/mnt/BitcoinCore/electrumx_start.sh
+ExecStop=/mnt/BitcoinCore/electrumx_stop.sh
+
+[Install]
+WantedBy=multi-user.target

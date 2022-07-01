@@ -1,0 +1,12 @@
+# /etc/systemd/system/bitcoind.service
+
+[Unit]
+Description=bitcoind
+
+[Service]
+User=elmeri
+WorkingDirectory=/mnt/BitcoinCore
+ExecStart=/mnt/BitcoinCore/bitcoind.sh
+
+[Install]
+WantedBy=multi-user.target

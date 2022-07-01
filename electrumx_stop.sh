@@ -1,1 +1,2 @@
-./electrumx/electrumx_rpc -p 8000 stop
+#!/bin/bash
+./electrumx/electrumx_rpc -p 50000 stop

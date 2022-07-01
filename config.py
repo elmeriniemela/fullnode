@@ -23,7 +23,8 @@ bitcoin = {
 }
 
 electrumx = {
-    'SERVICES': 'tcp://127.0.0.1:50001,rpc://',
+    'PEER_DISCOVERY': 'self',
+    'SERVICES': 'tcp://0.0.0.0:50001,rpc://127.0.0.1:50000',
     'DAEMON_URL': f'http://{bitcoin["rpcuser"]}:{bitcoin["rpcpassword"]}@{bitcoin["rpcbind"]}:{bitcoin["rpcport"]}',
     'USERNAME': 'elmeri',
     'NET': 'mainnet',
