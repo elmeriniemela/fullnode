@@ -5,8 +5,8 @@ Description=bitcoind
 
 [Service]
 User=elmeri
-WorkingDirectory=/home/elmeri/BitcoinCore
-ExecStart=/home/elmeri/BitcoinCore/bitcoind.sh
+WorkingDirectory=/home/elmeri/ssd-fullnode
+ExecStart=/home/elmeri/ssd-fullnode/bitcoind.sh
 
 [Install]
 WantedBy=multi-user.target

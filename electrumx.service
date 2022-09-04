@@ -5,9 +5,9 @@ After=bitcoind.service
 
 [Service]
 User=elmeri
-WorkingDirectory=/home/elmeri/BitcoinCore
-ExecStart=/home/elmeri/BitcoinCore/electrumx_start.sh
-ExecStop=/home/elmeri/BitcoinCore/electrumx_stop.sh
+WorkingDirectory=/home/elmeri/ssd-fullnode
+ExecStart=/home/elmeri/ssd-fullnode/electrumx_start.sh
+ExecStop=/home/elmeri/ssd-fullnode/electrumx_stop.sh
 
 [Install]
 WantedBy=multi-user.target
