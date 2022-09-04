@@ -1,5 +1,6 @@
 
 .Trash-1000
+electrumx-venv
 bitcoin-blockchain-datadir/electrum_db
 bitcoin-blockchain-datadir/blocks
 bitcoin-blockchain-datadir/indexes
