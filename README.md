@@ -17,8 +17,8 @@
 * `./bitcoind.sh`
 
 ## Install electrumx dependencies:
-* `cd electrumx/`
 * `python3.8 -m venv electrumx-venv`
+* `cd electrumx/`
 * `../electrumx-venv/bin/python -m pip install .`
 
 ## Usage:
