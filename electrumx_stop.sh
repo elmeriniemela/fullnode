@@ -1,2 +1,2 @@
 #!/bin/bash
-./electrumx/electrumx_rpc -p 50000 stop
+./electrumx-venv/bin/python ./electrumx/electrumx_rpc -p 50000 stop

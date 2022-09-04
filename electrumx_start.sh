@@ -1,3 +1,3 @@
 #!/bin/bash
 export $(grep -v '^#' bitcoin-blockchain-datadir/electrumx.env | xargs)
-./electrumx/electrumx_server
+./electrumx-venv/bin/python ./electrumx/electrumx_server

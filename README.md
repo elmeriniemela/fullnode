@@ -18,7 +18,8 @@
 
 ## Install electrumx dependencies:
 * `cd electrumx/`
-* `pip3 install .`
+* `python3.8 -m venv electrumx-venv`
+* `../electrumx-venv/bin/python -m pip install .`
 
 ## Usage:
 * `./electrumx_start.sh`
