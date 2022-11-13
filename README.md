@@ -13,7 +13,7 @@ CookieAuthFileGroupReadable 1
 DataDirectoryGroupReadable 1
 
 # Manually create a ElectrumX service accessible from tor netowrk.
-HiddenServiceDir /var/lib/tor/electrumX_service/
+HiddenServiceDir /var/lib/tor/electrumx/
 HiddenServicePort 50001 127.0.0.1:50001
 HiddenServicePort 50002 127.0.0.1:50002
 ```

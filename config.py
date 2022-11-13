@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import secrets
 import os
-from OpenSSL import crypto
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -46,18 +45,20 @@ electrumx = {
     'SSL_KEYFILE': os.path.join(CURRENT_DIR, 'bitcoin-blockchain-datadir/electrumx-ssl.key'),
 }
 
-k = crypto.PKey()
-k.generate_key(crypto.TYPE_RSA, 4096)
-cert = crypto.X509()
-cert.gmtime_adj_notBefore(0)
-cert.gmtime_adj_notAfter(10*365*24*60*60)
-cert.set_issuer(cert.get_subject())
-cert.set_pubkey(k)
-cert.sign(k, 'sha512')
-with open(electrumx['SSL_CERTFILE'], "wt") as f:
-    f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode("utf-8"))
-with open(electrumx['SSL_KEYFILE'], "wt") as f:
-    f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode("utf-8"))
+if not os.path.exists(electrumx['SSL_CERTFILE']):
+    from OpenSSL import crypto
+    k = crypto.PKey()
+    k.generate_key(crypto.TYPE_RSA, 4096)
+    cert = crypto.X509()
+    cert.gmtime_adj_notBefore(0)
+    cert.gmtime_adj_notAfter(10*365*24*60*60)
+    cert.set_issuer(cert.get_subject())
+    cert.set_pubkey(k)
+    cert.sign(k, 'sha512')
+    with open(electrumx['SSL_CERTFILE'], "wt") as f:
+        f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode("utf-8"))
+    with open(electrumx['SSL_KEYFILE'], "wt") as f:
+        f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode("utf-8"))
 
 def save(path, config):
     config_str = '\n'.join(f'{key}={value}' for key, value in config.items())
