@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-import subprocess
 import secrets
+import os
+from OpenSSL import crypto
+
+CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 bitcoin = {
     'upnp': 1,
@@ -24,7 +27,7 @@ bitcoin = {
     'rpcport': 8332,
 }
 
-# onion_host = subprocess.run("sudo cat /var/lib/tor/electrumX_service/hostname", shell=True, check=True, capture_output=True, encoding='utf-8').stdout.strip()
+# onion_host = subprocess.run("./electrumx-onion-host.py", shell=True, check=True, capture_output=True, encoding='utf-8').stdout.strip()
 
 electrumx = {
     'PEER_DISCOVERY': 'self', # peer discovery is disabled and the server will only return itself in the peers list.
@@ -39,9 +42,22 @@ electrumx = {
     'FORCE_PROXY': True,
     'TOR_PROXY_HOST': 'localhost',
     'TOR_PROXY_PORT': 9050,
-    'SSL_CERTFILE': 'server.crt',
-    'SSL_KEYFILE': 'server.key',
+    'SSL_CERTFILE': os.path.join(CURRENT_DIR, 'bitcoin-blockchain-datadir/electrumx-ssl.crt'),
+    'SSL_KEYFILE': os.path.join(CURRENT_DIR, 'bitcoin-blockchain-datadir/electrumx-ssl.key'),
 }
+
+k = crypto.PKey()
+k.generate_key(crypto.TYPE_RSA, 4096)
+cert = crypto.X509()
+cert.gmtime_adj_notBefore(0)
+cert.gmtime_adj_notAfter(10*365*24*60*60)
+cert.set_issuer(cert.get_subject())
+cert.set_pubkey(k)
+cert.sign(k, 'sha512')
+with open(electrumx['SSL_CERTFILE'], "wt") as f:
+    f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode("utf-8"))
+with open(electrumx['SSL_KEYFILE'], "wt") as f:
+    f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode("utf-8"))
 
 def save(path, config):
     config_str = '\n'.join(f'{key}={value}' for key, value in config.items())

@@ -50,3 +50,11 @@ HiddenServicePort 50002 127.0.0.1:50002
 
 ## Connect wallet:
 * `electrum --oneserver --server 127.0.0.1:50001:t`
+
+## Connect wallet via tor:
+* Get tor hostname: `sudo ./electrumx-onion-host.py`
+* Install tor
+    * Linux: `sudo pacman -S tor`
+    * Android download Orbot and add electrum to its services
+* Electrum -> Network -> Proxy: localhost:9050
+* `electrum --oneserver --server <tor-host-name>:50002:s`
