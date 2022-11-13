@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import subprocess
 import secrets
 
 bitcoin = {
@@ -24,15 +24,23 @@ bitcoin = {
     'rpcport': 8332,
 }
 
+# onion_host = subprocess.run("sudo cat /var/lib/tor/electrumX_service/hostname", shell=True, check=True, capture_output=True, encoding='utf-8').stdout.strip()
+
 electrumx = {
     'PEER_DISCOVERY': 'self', # peer discovery is disabled and the server will only return itself in the peers list.
-    'SERVICES': 'tcp://0.0.0.0:50001,rpc://127.0.0.1:50000',
+    'SERVICES': 'tcp://0.0.0.0:50001,ssl://0.0.0.0:50002,rpc://127.0.0.1:50000',
+     #'REPORT_SERVICES': 'tcp://{onion_host}:50001,ssl://{onion_host}:50002',
     'DAEMON_URL': f'http://{bitcoin["rpcuser"]}:{bitcoin["rpcpassword"]}@{bitcoin["rpcbind"]}:{bitcoin["rpcport"]}',
     'USERNAME': 'elmeri',
     'NET': 'mainnet',
     'COIN': 'Bitcoin',
     'ELECTRUMX': 'electrumx/electrumx_server',
     'DB_DIRECTORY': 'bitcoin-blockchain-datadir/electrum_db',
+    'FORCE_PROXY': True,
+    'TOR_PROXY_HOST': 'localhost',
+    'TOR_PROXY_PORT': 9050,
+    'SSL_CERTFILE': 'server.crt',
+    'SSL_KEYFILE': 'server.key',
 }
 
 def save(path, config):
