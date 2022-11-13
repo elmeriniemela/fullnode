@@ -1,5 +1,16 @@
 
 ## Build bitcoind
+* sudo pacman -S tor
+* sudo systemctl enable tor --now
+* sudo usermod -a -G tor elmeri
+* Add to /etc/tor/torrc
+```
+ControlPort 9051
+CookieAuthentication 1
+CookieAuthFile /var/lib/tor/control_auth_cookie
+CookieAuthFileGroupReadable 1
+DataDirectoryGroupReadable 1
+```
 * `git submodule update --init`
 * `cd bitcoin`
 * `./autogen.sh`

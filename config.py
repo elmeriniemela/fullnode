@@ -6,6 +6,8 @@ bitcoin = {
     'upnp': 1,
     'txindex': 1,
     'networkactive': 1, # Enable all P2P network activity (default: 1). Can be changed by the setnetworkactive RPC command
+    'proxy': '127.0.0.1:9050', # Tor Proxy
+    'debug': 'tor', # enable Tor debug logging.
     'listen': 1,
     'bind': '0.0.0.0',
     'port': 8333,
@@ -23,7 +25,7 @@ bitcoin = {
 }
 
 electrumx = {
-    'PEER_DISCOVERY': 'self',
+    'PEER_DISCOVERY': 'self', # peer discovery is disabled and the server will only return itself in the peers list.
     'SERVICES': 'tcp://0.0.0.0:50001,rpc://127.0.0.1:50000',
     'DAEMON_URL': f'http://{bitcoin["rpcuser"]}:{bitcoin["rpcpassword"]}@{bitcoin["rpcbind"]}:{bitcoin["rpcport"]}',
     'USERNAME': 'elmeri',

@@ -15,4 +15,5 @@ bitcoin-blockchain-datadir/mempool.dat
 bitcoin-blockchain-datadir/peers.dat
 bitcoin-blockchain-datadir/bitcoin.conf
 bitcoin-blockchain-datadir/electrumx.env
+bitcoin-blockchain-datadir/onion_v3_private_key
 
