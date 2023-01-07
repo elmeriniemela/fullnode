@@ -1,9 +1,10 @@
 
 ## Build bitcoind
-* sudo pacman -S tor
-* sudo systemctl enable tor --now
-* sudo usermod -a -G tor elmeri
-* Add to /etc/tor/torrc
+* Tor is for securely accessing the node from outside networks. ZeroMQ is for lnd notifications.
+* `sudo pacman -S tor zeromq`
+* `sudo systemctl enable tor --now`
+* `sudo usermod -a -G tor elmeri`
+* Add to `/etc/tor/torrc`
 ```
 # Allow bitcoind to automatically create a service accessible from tor network.
 ControlPort 9051
