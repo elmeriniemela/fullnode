@@ -4,3 +4,6 @@
 [submodule "bitcoin"]
 	path = bitcoin
 	url = https://github.com/bitcoin/bitcoin.git
+[submodule "lnd"]
+	path = lnd
+	url = https://github.com/lightningnetwork/lnd
