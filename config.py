@@ -25,6 +25,8 @@ bitcoin = {
     'rpcbind': '127.0.0.1',
     'rpcallowip': '127.0.0.1',
     'rpcport': 8332,
+    'zmqpubrawblock': 'tcp://127.0.0.1:28332',
+    'zmqpubrawtx': 'tcp://127.0.0.1:28333',
 }
 
 # onion_host = subprocess.run("./electrumx-onion-host.py", shell=True, check=True, capture_output=True, encoding='utf-8').stdout.strip()

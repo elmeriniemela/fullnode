@@ -24,6 +24,17 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `make`
 * Source: https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md
 
+## Install electrumx dependencies:
+* `python3.8 -m venv electrumx-venv`
+* `cd electrumx/`
+* `../electrumx-venv/bin/python -m pip install .`
+
+## Lightning Network Daemon (lnd)
+* `mkdir go`
+* `sudo pacman -S go`
+* `cd lnd`
+* `GOPATH=../go make install`
+* Update `git pull && make clean && make && make install`
 
 ## Cofigure bitcoind and electrumx
 * `./config.py`
@@ -32,11 +43,6 @@ HiddenServicePort 50002 127.0.0.1:50002
 
 ## Run bitcoind before starting electrumx:
 * `./bitcoind.sh`
-
-## Install electrumx dependencies:
-* `python3.8 -m venv electrumx-venv`
-* `cd electrumx/`
-* `../electrumx-venv/bin/python -m pip install .`
 
 ## Usage:
 * `./electrumx_start.sh`
