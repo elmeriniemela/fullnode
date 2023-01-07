@@ -1,7 +1,8 @@
 
 ## Build bitcoind
 * Tor is for securely accessing the node from outside networks. ZeroMQ is for lnd notifications.
-* `sudo pacman -S tor zeromq`
+* `sudo pacman -S --needed tor zeromq`
+* `sudo pacman -S --needed autoconf automake boost gcc libevent libtool make pkgconf python sqlite`
 * `sudo systemctl enable tor --now`
 * `sudo usermod -a -G tor elmeri`
 * Add to `/etc/tor/torrc`
