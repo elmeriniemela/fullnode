@@ -33,7 +33,7 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `mkdir go`
 * `sudo pacman -S go`
 * `cd lnd`
-* `GOPATH=../go make install`
+* `GOPATH=~/ssd-fullnode/go make install`
 * Update `git pull && make clean && make && make install`
 
 ## Cofigure bitcoind and electrumx
