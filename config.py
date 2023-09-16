@@ -6,6 +6,7 @@ import os
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 bitcoin = {
+    'maxmempool': 2000, # store 2gb of low fee transactions instead of 0.3
     'upnp': 1,
     'txindex': 1,
     'networkactive': 1, # Enable all P2P network activity (default: 1). Can be changed by the setnetworkactive RPC command
