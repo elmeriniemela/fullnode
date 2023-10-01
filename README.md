@@ -70,7 +70,6 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `electrum --oneserver --server <tor-host-name>:50002:s`
 
 ## btcpayserver
-* `sudo pacman -S `
 * `yay -S btcpayserver nbxplorer`
 * `sudo cp nbxplorer.service /etc/systemd/system/`
 * `sudo cp btcpayserver.service /etc/systemd/system/`

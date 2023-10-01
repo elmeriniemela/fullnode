@@ -28,6 +28,7 @@ bitcoin = {
     'rpcport': 8332,
     'zmqpubrawblock': 'tcp://127.0.0.1:28332',
     'zmqpubrawtx': 'tcp://127.0.0.1:28333',
+    'whitelist': '127.0.0.1',
 }
 
 # onion_host = subprocess.run("./electrumx-onion-host.py", shell=True, check=True, capture_output=True, encoding='utf-8').stdout.strip()
@@ -52,7 +53,7 @@ electrumx = {
 nbxplorer = {
     "postgres": '"User ID=elmeri;Host=localhost;Database=nbxplorer"',
     "btcrpcauth": f'{bitcoin["rpcuser"]}:{bitcoin["rpcpassword"]}',
-    "btcrpcurl": f'127.0.0.1:{bitcoin["rpcport"]}',
+    "btcrpcurl": f'http://127.0.0.1:{bitcoin["rpcport"]}',
     "btcnodeendpoint": f'127.0.0.1:{bitcoin["port"]}'
 }
 
@@ -70,7 +71,7 @@ if not os.path.exists(electrumx['SSL_CERTFILE']):
     subprocess.run(f'openssl req -new -newkey rsa:2048 -days 18250 -nodes -x509 -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com" -keyout {electrumx["SSL_KEYFILE"]} -out {electrumx["SSL_CERTFILE"]}', shell=True, check=True)
 
 def save(path, config):
-    config_str = '\n'.join(f'{key}={value}' for key, value in config.items())
+    config_str = '\n'.join(f'{key}={value}' for key, value in config.items()) + '\n'
     with open(path, 'w') as fp:
         fp.write(config_str)
 
