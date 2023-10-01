@@ -66,3 +66,11 @@ HiddenServicePort 50002 127.0.0.1:50002
     * Android download Orbot and add electrum to its services
 * Electrum -> Network -> Proxy: localhost:9050
 * `electrum --oneserver --server <tor-host-name>:50002:s`
+
+## btcpayserver
+* `sudo pacman -S nbxplorer`
+* `yay -S btcpayserver`
+* `sudo cp nbxplorer.service /etc/systemd/system/`
+* `sudo cp btcpayserver.service /etc/systemd/system/`
+* `sudo systemctl enable nbxplorer --now && journalctl -u nbxplorer.service -f`
+* `sudo systemctl enable btcpayserver --now && journalctl -u btcpayserver.service -f`

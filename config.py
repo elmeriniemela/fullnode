@@ -49,6 +49,23 @@ electrumx = {
     'SSL_KEYFILE': os.path.join(CURRENT_DIR, 'bitcoin-blockchain-datadir/electrumx-ssl.key'),
 }
 
+nbxplorer = {
+    "postgres": '"User ID=elmeri;Host=localhost;Database=nbxplorer"',
+    "btcrpcauth": f'{bitcoin["rpcuser"]}:{bitcoin["rpcpassword"]}',
+    "btcrpcurl": f'127.0.0.1:{bitcoin["rpcport"]}',
+    "btcnodeendpoint": f'127.0.0.1:{bitcoin["port"]}'
+}
+
+certthumbprint = subprocess.run('openssl x509 -noout -fingerprint -sha256 -in ~/.lnd/tls.cert | sed -e "s/.*=//;s/://g"', shell=True, check=True, stdout=subprocess.PIPE).stdout.decode().strip()
+btcpayserver = {
+    'networ': 'mainnet',
+    'port': 23000,
+    'bind': "127.0.0.1",
+    'explorerpostgres': nbxplorer['postgres'],
+    "postgres": '"User ID=elmeri;Host=localhost;Database=btcpayserver"',
+    "btclightning": f'"type=lnd-rest;server=https://127.0.0.1:8080/;macaroonfilepath=/home/elmeri/.lnd/data/chain/bitcoin/mainnet/admin.macaroon;certthumbprint={certthumbprint}"',
+}
+
 if not os.path.exists(electrumx['SSL_CERTFILE']):
     subprocess.run(f'openssl req -new -newkey rsa:2048 -days 18250 -nodes -x509 -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com" -keyout {electrumx["SSL_KEYFILE"]} -out {electrumx["SSL_CERTFILE"]}', shell=True, check=True)
 
@@ -59,3 +76,5 @@ def save(path, config):
 
 save('bitcoin-blockchain-datadir/electrumx.env', electrumx)
 save('bitcoin-blockchain-datadir/bitcoin.conf', bitcoin)
+save('bitcoin-blockchain-datadir/nbxplorer.config', nbxplorer)
+save('bitcoin-blockchain-datadir/btcpayserver/Main/settings.config', btcpayserver)
