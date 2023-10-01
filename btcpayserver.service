@@ -8,7 +8,7 @@ After=lnd.service
 [Service]
 User=elmeri
 WorkingDirectory=/home/elmeri/ssd-fullnode
-ExecStart=btcpayserver -c /home/elmeri/ssd-fullnode/bitcoin-blockchain-datadir/btcpayserver
+ExecStart=btcpayserver -d /home/elmeri/ssd-fullnode/bitcoin-blockchain-datadir/btcpayserver
 
 [Install]
 WantedBy=multi-user.target
