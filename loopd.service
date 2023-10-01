@@ -1,0 +1,12 @@
+[Unit]
+Description=loopd
+Requires=lnd.service
+After=lnd.service
+
+[Service]
+User=elmeri
+WorkingDirectory=/home/elmeri/ssd-fullnode
+ExecStart=/home/elmeri/ssd-fullnode/loopd.sh
+
+[Install]
+WantedBy=multi-user.target
