@@ -35,8 +35,12 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `mkdir go`
 * `sudo pacman -S go`
 * `cd lnd`
-* `GOPATH=~/ssd-fullnode/go make install`
+* `GOPATH=~/ssd-fullnode/go make install tags="signrpc walletrpc chainrpc invoicesrpc"`
 * Update `git pull && make clean && make && make install`
+
+## Lightning Loop
+* `cd loop/cmd`
+* `go install ./...`
 
 ## Cofigure services
 * `./config.py`
