@@ -42,6 +42,11 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `cd loop/cmd`
 * `GOPATH=~/ssd-fullnode/go go install ./...`
 
+## Fedimint
+* `sudo pacman -S nix`
+* `cd fedimint`
+* `nix develop`
+
 ## Cofigure services
 * `./config.py`
 * `cat bitcoin-blockchain-datadir/bitcoin.conf`

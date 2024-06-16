@@ -10,3 +10,6 @@
 [submodule "loop"]
 	path = loop
 	url = https://github.com/lightninglabs/loop.git
+[submodule "fedimint"]
+	path = fedimint
+	url = https://github.com/fedimint/fedimint.git
