@@ -1,2 +1,2 @@
 #!/bin/bash
-./go/bin/lncli $@
+./fullnode/go/bin/lncli $@

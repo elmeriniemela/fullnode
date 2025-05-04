@@ -1,3 +1,3 @@
 #!/bin/bash
-./go/bin/loopd
+./fullnode/go/bin/loopd
 
