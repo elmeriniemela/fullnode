@@ -10,3 +10,6 @@
 [submodule "loop"]
 	path = loop
 	url = https://github.com/lightninglabs/loop.git
+[submodule "datum_gateway"]
+	path = datum_gateway
+	url = git@github.com:OCEAN-xyz/datum_gateway.git
