@@ -6,14 +6,13 @@ import json
 
 CURRENT_DIR = os.getcwd()
 
-bitcoin = [
+ENABLE_TOR = True
 
+bitcoin = [
     ('maxmempool', 2000), # store 2gb of low fee transactions instead of 0.3
     ('upnp', 1),
     ('txindex', 1),
     ('networkactive', 1), # Enable all P2P network activity (default: 1). Can be changed by the setnetworkactive RPC command
-    ('proxy', '127.0.0.1:9050'), # Tor Proxy
-    ('debug', 'tor'), # enable Tor debug logging.
     ('listen', 1),
     ('bind', '0.0.0.0'),
     ('port', 8333),
@@ -33,7 +32,11 @@ bitcoin = [
     ('zmqpubrawtx', 'tcp://127.0.0.1:28333'),
     ('whitelist', '127.0.0.1'),
 ]
-
+if ENABLE_TOR:
+    bitcoin += [
+        ('proxy', '127.0.0.1:9050'), # Tor Proxy
+        ('debug', 'tor'), # enable Tor debug logging.
+    ]
 # onion_host = subprocess.run("./electrumx-onion-host.py", shell=True, check=True, capture_output=True, encoding='utf-8').stdout.strip()
 bitcoindict = dict(bitcoin)
 
@@ -48,11 +51,14 @@ electrumx = [
     ('ELECTRUMX', 'electrumx/electrumx_server'),
     ('DB_DIRECTORY', 'data/electrum_db'),
     ('FORCE_PROXY', True),
-    ('TOR_PROXY_HOST', 'localhost'),
-    ('TOR_PROXY_PORT', 9050),
     ('SSL_CERTFILE', os.path.join(CURRENT_DIR, 'config/electrumx-ssl.crt')),
     ('SSL_KEYFILE', os.path.join(CURRENT_DIR, 'config/electrumx-ssl.key')),
 ]
+if ENABLE_TOR:
+    electrumx += [
+        ('TOR_PROXY_HOST', 'localhost'),
+        ('TOR_PROXY_PORT', 9050),
+    ]
 
 electrumxdict = dict(electrumx)
 
