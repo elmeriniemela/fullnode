@@ -7,7 +7,7 @@ After=bitcoind.service
 [Service]
 User=elmeri
 WorkingDirectory=/home/elmeri/bitcoin-extdrive
-ExecStart=./fullnode/datum_gateway/datum_gateway -c config/datum_gateway.json
+ExecStart=/home/elmeri/bitcoin-extdrive/fullnode/datum_gateway/datum_gateway -c config/datum_gateway.json
 Restart=always
 RestartSec=5
 StartLimitInterval=400

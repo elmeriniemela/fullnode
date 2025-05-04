@@ -17,7 +17,7 @@ bitcoin = [
     ('bind', '0.0.0.0'),
     ('port', 8333),
     ('maxconnections', 64),
-    ('dbcache', 64),
+    ('dbcache', 2048), # 2gb of cache
     ('par', 2),
     ('checkblocks', 24),
     ('checklevel', 0),

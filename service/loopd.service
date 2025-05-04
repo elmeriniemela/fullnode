@@ -7,7 +7,7 @@ After=lnd.service
 [Service]
 User=elmeri
 WorkingDirectory=/home/elmeri/bitcoin-extdrive
-ExecStart=./fullnode/bin/loopd.sh
+ExecStart=/home/elmeri/bitcoin-extdrive/fullnode/bin/loopd.sh
 Restart=always
 RestartSec=5
 StartLimitInterval=400
