@@ -2,6 +2,7 @@
 import subprocess
 import secrets
 import os
+import json
 
 CURRENT_DIR = os.getcwd()
 
@@ -77,12 +78,52 @@ btcpayserver = [
 if not os.path.exists(electrumxdict['SSL_CERTFILE']):
     subprocess.run(f'openssl req -new -newkey rsa:2048 -days 18250 -nodes -x509 -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com" -keyout {electrumxdict["SSL_KEYFILE"]} -out {electrumxdict["SSL_CERTFILE"]}', shell=True, check=True)
 
+datum_gateway = {
+	"bitcoind": {
+		"rpcuser": bitcoindict["rpcuser"],
+		"rpcpassword": bitcoindict["rpcpassword"],
+		"rpcurl": f'http://127.0.0.1:{bitcoindict["rpcport"]}',
+		"notify_fallback": True
+	},
+	"stratum": {
+		"listen_port": 23334
+	},
+	"mining": {
+		"pool_address": "put your own Bitcoin invoice address here",
+		"coinbase_tag_primary": "DATUM Gateway",
+		"coinbase_tag_secondary": "DATUM User"
+	},
+	"api": {
+		"admin_password": secrets.token_urlsafe(32),
+		"listen_port": 7152,
+		"modify_conf": False
+	},
+	"logger": {
+		"log_to_console": True,
+		"log_to_file": False,
+		"log_file": "/var/log/datum.log",
+		"log_rotate_daily": True,
+		"log_level_console": 2,
+		"log_level_file": 1
+	},
+	"datum": {
+		"pool_pass_workers": True,
+		"pool_pass_full_users": True,
+		"pooled_mining_only": True
+	}
+}
+
+
 def save(path, config):
     config_str = '\n'.join(f'{key}={value}' for key, value in config) + '\n'
     with open(path, 'w') as fp:
         fp.write(config_str)
 
+
+
 save('config/electrumx.env', electrumx)
 save('config/bitcoin.conf', bitcoin)
 save('config/nbxplorer.config', nbxplorer)
 save('data/btcpayserver/Main/settings.config', btcpayserver)
+with open('config/datum_gateway.json', 'w') as fp:
+    json.dump(datum_gateway, fp, indent=4)

@@ -27,7 +27,7 @@ HiddenServicePort 50002 127.0.0.1:50002
 * Source: https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md
 
 ## Install electrumx dependencies:
-* `python3.8 -m venv electrumx-venv`
+* `python3.12 -m venv electrumx-venv`
 * `cd electrumx/`
 * `../electrumx-venv/bin/python -m pip install .`
 
@@ -42,17 +42,12 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `mkdir go`
 * `sudo pacman -S go`
 * `cd lnd`
-* `GOPATH=~/ssd-fullnode/go make install tags="signrpc walletrpc chainrpc invoicesrpc"`
+* `GOPATH=~/bitcoin-extdrive/fullnode/go make install tags="signrpc walletrpc chainrpc invoicesrpc"`
 * Update `git pull && make clean && make` and run command above
 
 ## Lightning Loop
 * `cd loop/cmd`
-* `GOPATH=~/ssd-fullnode/go go install ./...`
-
-## Fedimint
-* `sudo pacman -S nix`
-* `cd fedimint`
-* `nix develop`
+* `GOPATH=~/bitcoin-extdrive/fullnode/go go install ./...`
 
 ## Cofigure services
 * `cd .. && mkdir config`
@@ -70,8 +65,8 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `./electrumx_stop.sh`
 
 ## Service
-* `sudo cp bitcoind.service /etc/systemd/system/`
-* `sudo cp electrumx.service /etc/systemd/system/`
+* `sudo cp service/* /etc/systemd/system/`
+* `sudo systemctl daemon-reload`
 * `sudo systemctl enable bitcoind --now && journalctl -u bitcoind.service -f`
 * `sudo systemctl enable electrumx --now && journalctl -u electrumx.service -f`
 
