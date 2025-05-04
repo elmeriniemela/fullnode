@@ -31,6 +31,13 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `cd electrumx/`
 * `../electrumx-venv/bin/python -m pip install .`
 
+
+## DATUM Gateway
+* `cd datum_gateway`
+* `sudo pacman -Syu base-devel cmake pkgconf curl jansson libsodium libmicrohttpd psmisc`
+* `cmake . && make`
+
+
 ## Lightning Network Daemon (lnd)
 * `mkdir go`
 * `sudo pacman -S go`
