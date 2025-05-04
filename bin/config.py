@@ -18,8 +18,8 @@ bitcoin = [
     ('port', 8333),
     ('maxconnections', 64),
     ('dbcache', 2048), # 2gb of cache
-    ('par', 2),
-    ('checkblocks', 24),
+    ('par', 4), # number of script verification threads used during block validation
+    ('checkblocks', 6), # how many blocks to check at startup
     ('checklevel', 0),
     ('disablewallet', 1),
     ('rpcuser', 'elmeri'),
