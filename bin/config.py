@@ -121,9 +121,9 @@ def save(path, config):
 
 
 
-save('config/electrumx.env', electrumx)
-save('config/bitcoin.conf', bitcoin)
-save('config/nbxplorer.config', nbxplorer)
 save('data/btcpayserver/Main/settings.config', btcpayserver)
+save('data/bitcoin.conf', bitcoin)
+save('config/electrumx.env', electrumx)
+save('config/nbxplorer.config', nbxplorer)
 with open('config/datum_gateway.json', 'w') as fp:
     json.dump(datum_gateway, fp, indent=4)
