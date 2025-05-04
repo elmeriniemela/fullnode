@@ -9,15 +9,15 @@ CURRENT_DIR = os.getcwd()
 ENABLE_TOR = True
 
 bitcoin = [
-    ('maxmempool', 2000), # store 2gb of low fee transactions instead of 0.3
-    ('upnp', 1),
+    ('maxmempool', 4096), # store 2gb of low fee transactions instead of 0.3
+    ('upnp', 0), # disable UPnP, we have port forwarding
     ('txindex', 1),
     ('networkactive', 1), # Enable all P2P network activity (default: 1). Can be changed by the setnetworkactive RPC command
     ('listen', 1),
     ('bind', '0.0.0.0'),
     ('port', 8333),
     ('maxconnections', 64),
-    ('dbcache', 2048), # 2gb of cache
+    ('dbcache', 8192), # 2gb of cache
     ('par', 4), # number of script verification threads used during block validation
     ('checkblocks', 6), # how many blocks to check at startup
     ('checklevel', 0),
@@ -128,7 +128,7 @@ def save(path, config):
 
 
 save('data/btcpayserver/Main/settings.config', btcpayserver)
-save('data/bitcoin.conf', bitcoin)
+save('config/bitcoin.conf', bitcoin)
 save('config/electrumx.env', electrumx)
 save('config/nbxplorer.config', nbxplorer)
 with open('config/datum_gateway.json', 'w') as fp:
