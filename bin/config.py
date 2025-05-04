@@ -115,7 +115,7 @@ datum_gateway = {
 	"datum": {
 		"pool_pass_workers": True,
 		"pool_pass_full_users": True,
-		"pooled_mining_only": True
+		"pooled_mining_only": False, # if connection to OCEAN dies, switch to lotto mining
 	}
 }
 
