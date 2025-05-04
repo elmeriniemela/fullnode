@@ -1,25 +1,2 @@
 
 .Trash-1000
-go
-electrumx-venv
-bitcoin-blockchain-datadir/electrum_db
-bitcoin-blockchain-datadir/blocks
-bitcoin-blockchain-datadir/indexes
-bitcoin-blockchain-datadir/anchors.dat
-bitcoin-blockchain-datadir/.cookie
-bitcoin-blockchain-datadir/chainstate
-bitcoin-blockchain-datadir/.lock
-bitcoin-blockchain-datadir/bitcoind.pid
-bitcoin-blockchain-datadir/debug.log
-bitcoin-blockchain-datadir/fee_estimates.dat
-bitcoin-blockchain-datadir/mempool.dat
-bitcoin-blockchain-datadir/peers.dat
-bitcoin-blockchain-datadir/bitcoin.conf
-bitcoin-blockchain-datadir/electrumx.env
-bitcoin-blockchain-datadir/nbxplorer.config
-bitcoin-blockchain-datadir/btcpayserver/Main/settings.config
-bitcoin-blockchain-datadir/btcpayserver/key-*.xml
-bitcoin-blockchain-datadir/lnd-pw.txt
-bitcoin-blockchain-datadir/onion_v3_private_key
-bitcoin-blockchain-datadir/electrumx-ssl.crt
-bitcoin-blockchain-datadir/electrumx-ssl.key

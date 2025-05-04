@@ -5,8 +5,8 @@ After=bitcoind.service
 
 [Service]
 User=elmeri
-WorkingDirectory=/home/elmeri/ssd-fullnode
-ExecStart=nbxplorer -c /home/elmeri/ssd-fullnode/bitcoin-blockchain-datadir/nbxplorer.config
+WorkingDirectory=/home/elmeri/bitcoin-extdrive
+ExecStart=nbxplorer -c config/nbxplorer.config
 Restart=always
 RestartSec=5
 StartLimitInterval=400

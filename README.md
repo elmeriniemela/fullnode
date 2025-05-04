@@ -55,11 +55,12 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `nix develop`
 
 ## Cofigure services
-* `./config.py`
-* `cat bitcoin-blockchain-datadir/bitcoin.conf`
-* `cat bitcoin-blockchain-datadir/electrumx.env`
-* `cat bitcoin-blockchain-datadir/nbxplorer.config`
-* `cat bitcoin-blockchain-datadir/btcpayserver/Main/settings.config`
+* `cd .. && mkdir config`
+* `./fullnode/bin/config.py`
+* `cat config/bitcoin.conf`
+* `cat config/electrumx.env`
+* `cat config/nbxplorer.config`
+* `cat data/btcpayserver/Main/settings.config`
 
 ## Run bitcoind before starting electrumx:
 * `./bitcoind.sh`

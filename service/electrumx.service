@@ -5,9 +5,9 @@ After=bitcoind.service
 
 [Service]
 User=elmeri
-WorkingDirectory=/home/elmeri/ssd-fullnode
-ExecStart=/home/elmeri/ssd-fullnode/electrumx_start.sh
-ExecStop=/home/elmeri/ssd-fullnode/electrumx_stop.sh
+WorkingDirectory=/home/elmeri/bitcoin-extdrive
+ExecStart=./fullnode/bin/electrumx_start.sh
+ExecStop=./fullnode/bin/electrumx_stop.sh
 Restart=always
 RestartSec=5
 StartLimitInterval=400

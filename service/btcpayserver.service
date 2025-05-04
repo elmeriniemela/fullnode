@@ -7,12 +7,8 @@ After=lnd.service
 
 [Service]
 User=elmeri
-WorkingDirectory=/home/elmeri/ssd-fullnode
-ExecStart=btcpayserver -d /home/elmeri/ssd-fullnode/bitcoin-blockchain-datadir/btcpayserver
-Restart=always
-RestartSec=5
-StartLimitInterval=400
-StartLimitBurst=3
+WorkingDirectory=/home/elmeri/bitcoin-extdrive
+ExecStart=btcpayserver -d ./data/btcpayserver
 
 [Install]
 WantedBy=multi-user.target

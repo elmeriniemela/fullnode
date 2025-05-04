@@ -1,2 +1,2 @@
 #!/bin/bash
-./bitcoin/src/bitcoind -datadir=bitcoin-blockchain-datadir -conf=bitcoin.conf $@
+./fullnode/bitcoin/src/bitcoind -datadir=data -conf=config/bitcoin.conf $@

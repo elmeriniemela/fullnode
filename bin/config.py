@@ -3,7 +3,7 @@ import subprocess
 import secrets
 import os
 
-CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
+CURRENT_DIR = os.getcwd()
 
 bitcoin = [
 
@@ -45,12 +45,12 @@ electrumx = [
     ('NET', 'mainnet'),
     ('COIN', 'Bitcoin'),
     ('ELECTRUMX', 'electrumx/electrumx_server'),
-    ('DB_DIRECTORY', 'bitcoin-blockchain-datadir/electrum_db'),
+    ('DB_DIRECTORY', 'data/electrum_db'),
     ('FORCE_PROXY', True),
     ('TOR_PROXY_HOST', 'localhost'),
     ('TOR_PROXY_PORT', 9050),
-    ('SSL_CERTFILE', os.path.join(CURRENT_DIR, 'bitcoin-blockchain-datadir/electrumx-ssl.crt')),
-    ('SSL_KEYFILE', os.path.join(CURRENT_DIR, 'bitcoin-blockchain-datadir/electrumx-ssl.key')),
+    ('SSL_CERTFILE', os.path.join(CURRENT_DIR, 'config/electrumx-ssl.crt')),
+    ('SSL_KEYFILE', os.path.join(CURRENT_DIR, 'config/electrumx-ssl.key')),
 ]
 
 electrumxdict = dict(electrumx)
@@ -82,7 +82,7 @@ def save(path, config):
     with open(path, 'w') as fp:
         fp.write(config_str)
 
-save('bitcoin-blockchain-datadir/electrumx.env', electrumx)
-save('bitcoin-blockchain-datadir/bitcoin.conf', bitcoin)
-save('bitcoin-blockchain-datadir/nbxplorer.config', nbxplorer)
-save('bitcoin-blockchain-datadir/btcpayserver/Main/settings.config', btcpayserver)
+save('config/electrumx.env', electrumx)
+save('config/bitcoin.conf', bitcoin)
+save('config/nbxplorer.config', nbxplorer)
+save('data/btcpayserver/Main/settings.config', btcpayserver)

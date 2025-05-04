@@ -5,8 +5,8 @@ After=bitcoind.service
 
 [Service]
 User=elmeri
-WorkingDirectory=/home/elmeri/ssd-fullnode
-ExecStart=/home/elmeri/ssd-fullnode/lnd.sh
+WorkingDirectory=/home/elmeri/bitcoin-extdrive
+ExecStart=./fullnode/bin/lnd.sh
 Restart=always
 RestartSec=5
 StartLimitInterval=400
