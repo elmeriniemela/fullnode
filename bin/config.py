@@ -16,6 +16,8 @@ bitcoin = [
     ('listen', 1),
     ('bind', '0.0.0.0'),
     ('port', 8333),
+    ('datacarrier', 1), # Allow OP_RETURN transactions
+    ('datacarriersize', 10000), # 10kb of data in a single transaction
     ('maxconnections', 64),
     ('dbcache', 8192), # 2gb of cache
     ('par', 4), # number of script verification threads used during block validation
