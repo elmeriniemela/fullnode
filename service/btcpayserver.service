@@ -1,14 +1,16 @@
 [Unit]
 Description=btcpayserver
+Requires=postgresql.service
 Requires=nbxplorer.service
 Requires=lnd.service
+After=postgresql.service
 After=nbxplorer.service
 After=lnd.service
 
 [Service]
 User=elmeri
 WorkingDirectory=/home/elmeri/bitcoin-extdrive
-ExecStart=btcpayserver -d ./data/btcpayserver
+ExecStart=btcpayserver -d /home/elmeri/bitcoin-extdrive/data/btcpayserver
 
 [Install]
 WantedBy=multi-user.target

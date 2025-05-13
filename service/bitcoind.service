@@ -12,5 +12,8 @@ RestartSec=5
 StartLimitInterval=400
 StartLimitBurst=3
 
+# Configures the time to wait before service is stopped forcefully.
+TimeoutStopSec=900
+
 [Install]
 WantedBy=multi-user.target
