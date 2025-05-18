@@ -13,9 +13,3 @@
 [submodule "datum_gateway"]
 	path = datum_gateway
 	url = git@github.com:OCEAN-xyz/datum_gateway.git
-[submodule "electrs"]
-	path = electrs
-	url = git@github.com:romanz/electrs.git
-[submodule "rocksdb"]
-	path = rocksdb
-	url = git@github.com:facebook/rocksdb.git
