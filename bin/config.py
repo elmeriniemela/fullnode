@@ -17,7 +17,7 @@ bitcoin = [
     ('bind', '0.0.0.0'),
     ('port', 8333),
     ('datacarrier', 1), # Allow OP_RETURN transactions
-    ('datacarriersize', 10000), # 10kb of data in a single transaction
+    ('datacarriersize', 100000), # 100kb of data in a single transaction
     ('maxconnections', 64),
     ('dbcache', 8192), # 2gb of cache
     ('par', 4), # number of script verification threads used during block validation
@@ -75,12 +75,22 @@ nbxplorerdict = dict(nbxplorer)
 
 certthumbprint = subprocess.run('openssl x509 -noout -fingerprint -sha256 -in ~/.lnd/tls.cert | sed -e "s/.*=//;s/://g"', shell=True, check=True, stdout=subprocess.PIPE).stdout.decode().strip()
 btcpayserver = [
-    ('networ', 'mainnet'),
+    ('network', 'mainnet'),
     ('port', 23000),
     ('bind', "127.0.0.1"),
     ('explorerpostgres', nbxplorerdict['postgres']),
     ('postgres', '"User ID=elmeri;Host=localhost;Database=btcpayserver"'),
     ('btclightning', f'"type=lnd-rest;server=https://127.0.0.1:8080/;macaroonfilepath=/home/elmeri/.lnd/data/chain/bitcoin/mainnet/admin.macaroon;certthumbprint={certthumbprint}"'),
+]
+
+electrs = [
+    ('auth', f'{bitcoindict["rpcuser"]}:{bitcoindict["rpcpassword"]}'),
+    ('daemon_rpc_addr', f'127.0.0.1:{bitcoindict["rpcport"]}')
+    ('daemon_p2p_addr', f'127.0.0.1:{bitcoindict["port"]}')
+    ('db_dir', 'data/electrs_db'),
+    ('network', 'bitcoin'),
+    ('electrum_rpc_addr', '127.0.0.1:50011'),
+    ('log_filters', 'INFO'),
 ]
 
 if not os.path.exists(electrumxdict['SSL_CERTFILE']):
@@ -132,6 +142,7 @@ def save(path, config):
 save('data/btcpayserver/Main/settings.config', btcpayserver)
 save('config/bitcoin.conf', bitcoin)
 save('config/electrumx.env', electrumx)
+save('config/electrs.toml', electrumx)
 save('config/nbxplorer.config', nbxplorer)
 with open('config/datum_gateway.json', 'w') as fp:
     json.dump(datum_gateway, fp, indent=4)

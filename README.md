@@ -32,7 +32,7 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `../electrumx-venv/bin/python -m pip install .`
 
 ## electrs
-* Currently installed via AUR: https://aur.archlinux.org/packages/electrs
+* Check hints from PKGBUILD via AUR: https://aur.archlinux.org/packages/electrs
 * `sudo pacman -S --needed clang gcc-libs cmake rust`
 * `export CXXFLAGS="$CXXFLAGS -include cstdint"`
 * `cargo build --bins --tests --release --locked`

@@ -1,0 +1,19 @@
+# /etc/systemd/system/electrs.service
+
+[Unit]
+Description=electrs
+
+[Service]
+User=elmeri
+WorkingDirectory=/home/elmeri/bitcoin-extdrive
+ExecStart=/home/elmeri/bitcoin-extdrive/fullnode/electrs/target/release/electrs --conf=config/electrs.toml
+Restart=always
+RestartSec=5
+StartLimitInterval=400
+StartLimitBurst=3
+
+# Configures the time to wait before service is stopped forcefully.
+TimeoutStopSec=900
+
+[Install]
+WantedBy=multi-user.target
