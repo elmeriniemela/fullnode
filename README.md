@@ -31,6 +31,10 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `cd electrumx/`
 * `../electrumx-venv/bin/python -m pip install .`
 
+## electrs
+* `sudo pacman -S --needed clang cmake rust rocksdb`
+* `ROCKSDB_INCLUDE_DIR=/usr/include ROCKSDB_LIB_DIR=/usr/lib cargo build --locked --release`
+
 
 ## DATUM Gateway
 * `cd datum_gateway`

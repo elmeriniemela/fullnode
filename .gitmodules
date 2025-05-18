@@ -16,3 +16,6 @@
 [submodule "electrs"]
 	path = electrs
 	url = git@github.com:romanz/electrs.git
+[submodule "rocksdb"]
+	path = rocksdb
+	url = git@github.com:facebook/rocksdb.git
