@@ -32,8 +32,9 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `../electrumx-venv/bin/python -m pip install .`
 
 ## electrs
-* `sudo pacman -S --needed clang cmake rust rocksdb`
-* `ROCKSDB_INCLUDE_DIR=/usr/include ROCKSDB_LIB_DIR=/usr/lib cargo build --locked --release`
+* Currently installed via AUR: https://aur.archlinux.org/packages/electrs
+* `sudo pacman -S --needed clang gcc-libs cmake rust`
+* `cargo build --bins --tests --release --locked`
 
 
 ## DATUM Gateway
