@@ -34,6 +34,7 @@ HiddenServicePort 50002 127.0.0.1:50002
 ## electrs
 * Currently installed via AUR: https://aur.archlinux.org/packages/electrs
 * `sudo pacman -S --needed clang gcc-libs cmake rust`
+* `export CXXFLAGS="$CXXFLAGS -include cstdint"`
 * `cargo build --bins --tests --release --locked`
 
 
