@@ -75,6 +75,7 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `sudo systemctl daemon-reload`
 * `sudo systemctl enable bitcoind --now && journalctl -u bitcoind.service -f`
 * `sudo systemctl enable electrumx --now && journalctl -u electrumx.service -f`
+* `sudo systemctl enable electrs --now && journalctl -u electrs.service -f`
 
 ## Connect wallet:
 * `electrum --oneserver --server 127.0.0.1:50001:t`
