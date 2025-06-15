@@ -18,11 +18,20 @@ bitcoin = [
     ('port', 8333),
     ('datacarrier', 1), # Allow OP_RETURN transactions
     ('datacarriersize', 100000), # 100kb of data in a single transaction
+    ('minrelaytxfee', '0.00000001'),
+    ('incrementalrelayfee', '0.00000001'),
+    ('dustrelayfee', '0.00000001'),
     ('maxconnections', 64),
     ('dbcache', 8192), # 2gb of cache
     ('par', 4), # number of script verification threads used during block validation
     ('checkblocks', 6), # how many blocks to check at startup
-    ('checklevel', 0),
+    ('checklevel', 0), # How thorough the block verification of -checkblocks is: (0-4, default: 3)
+    # "level 0 reads the blocks from disk",
+    # "level 1 verifies block validity",
+    # "level 2 verifies undo data",
+    # "level 3 checks disconnection of tip blocks",
+    # "level 4 tries to reconnect the blocks",
+    # "each level includes the checks of the previous levels",
     ('disablewallet', 1),
     ('rpcuser', 'elmeri'),
     ('rpcpassword', secrets.token_urlsafe(32)),
