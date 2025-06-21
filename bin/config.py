@@ -9,7 +9,7 @@ CURRENT_DIR = os.getcwd()
 ENABLE_TOR = True
 
 bitcoin = [
-    ('maxmempool', 4096), # store 2gb of low fee transactions instead of 0.3
+    ('maxmempool', 1024*2), # store 2gb of low fee transactions instead of 0.3
     ('upnp', 0), # disable UPnP, we have port forwarding
     ('txindex', 1),
     ('networkactive', 1), # Enable all P2P network activity (default: 1). Can be changed by the setnetworkactive RPC command
@@ -22,10 +22,10 @@ bitcoin = [
     ('incrementalrelayfee', '0.00000001'),
     ('dustrelayfee', '0.00000001'),
     ('maxconnections', 64),
-    ('dbcache', 8192), # 2gb of cache
+    ('dbcache', 4096), # 2gb of cache
     ('par', 4), # number of script verification threads used during block validation
-    ('checkblocks', 6), # how many blocks to check at startup
-    ('checklevel', 0), # How thorough the block verification of -checkblocks is: (0-4, default: 3)
+    ('checkblocks', 100), # how many blocks to check at startup
+    ('checklevel', 4), # How thorough the block verification of -checkblocks is: (0-4, default: 3)
     # "level 0 reads the blocks from disk",
     # "level 1 verifies block validity",
     # "level 2 verifies undo data",
