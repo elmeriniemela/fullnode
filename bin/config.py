@@ -155,6 +155,6 @@ def save(path, config):
 save('data/btcpayserver/Main/settings.config', btcpayserver)
 save('config/bitcoin.conf', bitcoin)
 save('config/electrumx.env', electrumx)
-save('config/electrs.toml', electrumx)
+save('config/electrs.toml', electrs)
 save('config/nbxplorer.config', nbxplorer)
 save('config/datum_gateway.json', datum_gateway)
