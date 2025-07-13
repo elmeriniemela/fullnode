@@ -9,6 +9,8 @@ Wants=network-online.target
 
 [Service]
 ExecStart=/home/elmeri/bitcoin-extdrive/fullnode/bin/bitcoind.sh
+WorkingDirectory=/home/elmeri/bitcoin-extdrive
+
 
 # Make sure the config directory is readable by the service user
 PermissionsStartOnly=true
