@@ -21,9 +21,9 @@ HiddenServicePort 50002 127.0.0.1:50002
 ```
 * `git submodule update --init`
 * `cd bitcoin`
-* `./autogen.sh`
-* `./configure`
-* `make`
+* `cmake -B build -DWITH_ZMQ=ON`
+* `cmake --build build`
+<!-- * `cmake --install build` -->
 * Source: https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md
 
 ## Install electrumx dependencies:
