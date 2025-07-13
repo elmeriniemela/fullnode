@@ -1,7 +1,7 @@
 # /etc/systemd/system/bitcoind.service
 [Unit]
 Description=Bitcoin daemon
-Documentation=https://github.com/bitcoin/bitcoin/blob/master/doc/init.md
+Documentation=https://github.com/bitcoin/bitcoin/blob/master/contrib/init/bitcoind.service
 
 # https://www.freedesktop.org/wiki/Software/systemd/NetworkTarget/
 After=network-online.target
@@ -35,14 +35,6 @@ Group=elmeri
 # /run/bitcoind
 RuntimeDirectory=bitcoind
 RuntimeDirectoryMode=0710
-
-# /etc/bitcoin
-ConfigurationDirectory=/home/elmeri/bitcoin-extdrive/config
-ConfigurationDirectoryMode=0755
-
-# /var/lib/bitcoind
-StateDirectory=/home/elmeri/bitcoin-extdrive/data
-StateDirectoryMode=0755
 
 # Hardening measures
 ####################
