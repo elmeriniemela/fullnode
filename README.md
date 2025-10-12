@@ -1,7 +1,7 @@
 
 ## Build bitcoind
 * Tor is for securely accessing the node from outside networks. ZeroMQ is for lnd notifications.
-* `sudo pacman -S --needed tor zeromq autoconf automake boost gcc libevent libtool make pkgconf python sqlite cmake`
+* `sudo pacman -S --needed tor zeromq autoconf automake boost gcc libevent libtool make pkgconf python sqlite cmake capnproto`
 * `sudo systemctl enable tor --now`
 * `sudo usermod -a -G tor elmeri`
 * Add to `/etc/tor/torrc`
@@ -20,7 +20,7 @@ HiddenServicePort 50002 127.0.0.1:50002
 ```
 * `git submodule update --init`
 * `cd bitcoin`
-* `cmake -B build -DWITH_ZMQ=ON`
+* `cmake -B build -DWITH_ZMQ=ON -DENABLE_WALLET=OFF`
 * `cmake --build build`
 * Source: https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md
 
