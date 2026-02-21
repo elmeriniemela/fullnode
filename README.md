@@ -21,7 +21,7 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `git submodule update --init`
 * `cd bitcoin`
 * `cmake -B build -DWITH_ZMQ=ON -DENABLE_WALLET=OFF`
-* `cmake --build build`
+* `cmake --build build -j 8`
 * Source: https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md
 
 ## Install electrumx dependencies:
@@ -52,6 +52,20 @@ HiddenServicePort 50002 127.0.0.1:50002
 ## Lightning Loop
 * `cd loop/cmd`
 * `GOPATH=~/bitcoin-extdrive/fullnode/go go install ./...`
+
+
+
+## Core Lightning (CLN)
+* `sudo pacman -S valgrind libpq-dev shellcheck cppcheck lowdown cargo rustfmt protobuf`
+
+
+
+
+## Elements Project blockchain platform (Liquid network)
+* `mkdir`
+
+
+
 
 ## Cofigure services
 * `cd .. && mkdir config`

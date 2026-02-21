@@ -19,3 +19,9 @@
 [submodule "URSF-110"]
 	path = URSF-110
 	url = git@github.com:supertestnet/URSF-110.git
+[submodule "elements"]
+	path = elements
+	url = git@github.com:ElementsProject/elements.git
+[submodule "lightning"]
+	path = lightning
+	url = git@github.com:ElementsProject/lightning.git
