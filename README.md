@@ -1,4 +1,11 @@
 
+# Personal 'fullnode'
+DISCLAIMER: This repository is for my personal deployment of Bitcoin-related software on my own infrastructure.
+
+It is not intended to be a generic installer, production-ready distribution, or security-hardened template for other environments.
+
+Expect host-specific assumptions (paths, usernames, system services, network settings) that may not apply outside my setup.
+
 ## Build bitcoind
 * Tor is for securely accessing the node from outside networks. ZeroMQ is for lnd notifications.
 * `sudo pacman -S --needed tor zeromq autoconf automake boost gcc libevent libtool make pkgconf python sqlite cmake capnproto`
@@ -108,3 +115,4 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `sudo cp btcpayserver.service /etc/systemd/system/`
 * `sudo systemctl enable nbxplorer --now && journalctl -u nbxplorer.service -f`
 * `sudo systemctl enable btcpayserver --now && journalctl -u btcpayserver.service -f`
+
