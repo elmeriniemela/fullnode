@@ -56,9 +56,11 @@ HiddenServicePort 50002 127.0.0.1:50002
 
 
 ## Core Lightning (CLN)
-* `sudo pacman -S valgrind libpq-dev shellcheck cppcheck lowdown cargo rustfmt protobuf`
-
-
+* `sudo pacman --needed -S uv jq autoconf automake libtool net-tools gettext lowdown valgrind shellcheck cppcheck lowdown cargo rustfmt protobuf`
+* `uv sync --all-extras --all-groups --frozen`
+* `./configure CWARNFLAGS="-Wall -Wundef -Wmissing-prototypes -Wmissing-declarations -Wstrict-prototypes -Wold-style-definition -Werror -Wno-maybe-uninitialized -Wshadow=local -Wno-error=discarded-qualifiers"`
+* `uv run make`
+* `uv run make check VALGRIND=0`
 
 
 ## Elements Project blockchain platform (Liquid network)
