@@ -28,7 +28,7 @@ async function draw() {
   // block boundary gridlines every 4M weight units
   for (let b = 4e6; b < maxW; b += 4e6)
     s += `<line x1="${x(b)}" y1="0" x2="${x(b)}" y2="${H}"/>` +
-         `<text x="${x(b)+4}" y="14">block ${b/4e6}</text>`;
+         `<text x="${x(b)+4}" y="14">${b/4e6}</text>`;
   s += '<path d="M' + d.map(p => `${x(p.weight)},${y(p.fee)}`).join(' L') + '"/>';
   svg.innerHTML = s;
   info.textContent = `${(maxW/4e6).toFixed(1)} blocks of weight, ` +
