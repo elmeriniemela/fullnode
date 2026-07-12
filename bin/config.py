@@ -48,6 +48,13 @@ if ENABLE_TOR:
         ('proxy', '127.0.0.1:9050'), # Tor Proxy
         ('debug', 'tor'), # enable Tor debug logging.
     ]
+else:
+    bitcoin += [
+        ('listenonion', '0'),
+        ('onlynet', 'ipv4'),
+        ('onlynet', 'ipv6'),
+    ]
+
 # onion_host = subprocess.run("./electrumx-onion-host.py", shell=True, check=True, capture_output=True, encoding='utf-8').stdout.strip()
 bitcoindict = dict(bitcoin)
 
