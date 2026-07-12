@@ -16,9 +16,6 @@
 [submodule "electrs"]
 	path = electrs
 	url = git@github.com:romanz/electrs.git
-[submodule "URSF-110"]
-	path = URSF-110
-	url = git@github.com:supertestnet/URSF-110.git
 [submodule "elements"]
 	path = elements
 	url = git@github.com:ElementsProject/elements.git
