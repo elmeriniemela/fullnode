@@ -48,10 +48,14 @@ if ! command -v jq >/dev/null; then
     exit 1
 fi
 
-time_cmd=(time)
-if [[ -x /usr/bin/time ]]; then
-    time_cmd=(/usr/bin/time -f "%e real    %U user    %S sys")
-fi
+time_run() {
+    if [[ -x /usr/bin/time ]]; then
+        /usr/bin/time -f "%e real    %U user    %S sys" "$@"
+    else
+        TIMEFORMAT=$'%3R real    %3U user    %3S sys'
+        time "$@"
+    fi
+}
 
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT
@@ -68,7 +72,7 @@ bench_loop() {
 
     echo
     echo "== $label =="
-    "${time_cmd[@]}" bash -c '
+    time_run bash -c '
         set -euo pipefail
         bitcoin_cli=$1
         rpc=$2
@@ -92,7 +96,7 @@ run_cli getmempoolinfo
 
 echo
 echo "== getrawmempool txid fetch =="
-"${time_cmd[@]}" bash -c '
+time_run bash -c '
     set -euo pipefail
     bitcoin_cli=$1
     count=$2
