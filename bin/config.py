@@ -9,6 +9,8 @@ CURRENT_DIR = os.getcwd()
 ENABLE_TOR = True
 
 bitcoin = [
+    ('server', '1'),
+    ('rest', '1'),
     ('maxmempool', 1024*2), # store 2gb of low fee transactions instead of 0.3
     ('upnp', 0), # disable UPnP, we have port forwarding
     ('txindex', 1),
@@ -22,9 +24,9 @@ bitcoin = [
     ('incrementalrelayfee', '0.00000001'),
     ('dustrelayfee', '0.00000001'),
     ('maxconnections', 64),
-    ('dbcache', 4096), # 2gb of cache
+    ('dbcache', 1024*8), # 8gb of cache
     ('par', 4), # number of script verification threads used during block validation
-    ('checkblocks', 100), # how many blocks to check at startup
+    ('checkblocks', 10), # how many blocks to check at startup
     ('checklevel', 4), # How thorough the block verification of -checkblocks is: (0-4, default: 3)
     # "level 0 reads the blocks from disk",
     # "level 1 verifies block validity",
@@ -35,13 +37,13 @@ bitcoin = [
     ('disablewallet', 1),
     ('rpcuser', 'elmeri'),
     ('rpcpassword', secrets.token_urlsafe(32)),
-    ('rpcbind', '0.0.0.0'),
+    ('rpcbind', '127.0.0.1'),
     ('rpcallowip', '192.168.0.0/16'),
-    ('rpcallowip', '37.27.20.117/32'),
     ('rpcport', 8332),
     ('zmqpubrawblock', 'tcp://127.0.0.1:28332'),
     ('zmqpubrawtx', 'tcp://127.0.0.1:28333'),
     ('whitelist', '127.0.0.1'),
+    ('debug', 'rpc'),
 ]
 if ENABLE_TOR:
     bitcoin += [
