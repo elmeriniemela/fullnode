@@ -91,6 +91,10 @@ echo
 "$bitcoin_cli" --version
 echo
 
+echo "== RPC server =="
+run_cli getnetworkinfo | jq '{version, subversion}'
+echo
+
 echo "== getmempoolinfo =="
 run_cli getmempoolinfo
 
