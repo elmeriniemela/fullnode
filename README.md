@@ -28,7 +28,7 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `git submodule update --init`
 * `cd bitcoin`
 * `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DENABLE_WALLET=OFF -DENABLE_IPC=OFF -DWITH_ZMQ=OFF -DENABLE_EXTERNAL_SIGNER=OFF -DBUILD_BITCOIN_BIN=OFF -DBUILD_DAEMON=ON -DBUILD_CLI=ON -DBUILD_TESTS=OFF -DBUILD_TX=OFF -DBUILD_UTIL=OFF -DBUILD_GUI=OFF -DBUILD_BENCH=OFF -DBUILD_FUZZ_BINARY=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DINSTALL_MAN=OFF`
-* `cmake --build build -j 8`
+* `cmake --build build -j$(nproc)`
 * Source: https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md
 
 ## Install electrumx dependencies:

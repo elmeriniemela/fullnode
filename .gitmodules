@@ -22,3 +22,9 @@
 [submodule "lightning"]
 	path = lightning
 	url = git@github.com:ElementsProject/lightning.git
+[submodule "bitcoinknots"]
+	path = bitcoinknots
+	url = https://github.com/bitcoinknots/bitcoin.git
+[submodule "pybitcoinkernel"]
+	path = pybitcoinkernel
+	url = https://github.com/elmeriniemela/pybitcoinkernel.git
