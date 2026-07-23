@@ -25,6 +25,7 @@ def save(path, config):
 
 knots = [
     ('chain', 'main'),
+    ('assumevalid', '00000000000000000000611fd22f2df7c8fbd0688745c3a6c3bb5109cc2a12cb'),
     ('server', 1),
     ('rest', 0),
     ('disablewallet', 1),
