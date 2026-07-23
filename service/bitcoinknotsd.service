@@ -8,7 +8,7 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStart=/home/elmeri/bitcoin-extdrive/fullnode/bin/bitcoind.sh -pid=/run/bitcoind/bitcoind.pid -startupnotify='systemd-notify --ready' -shutdownnotify='systemd-notify --stopping'
+ExecStart=/home/elmeri/bitcoin-extdrive/fullnode/bin/bitcoinknotsd.sh -pid=/run/bitcoinknotsd/bitcoinknotsd.pid -startupnotify='systemd-notify --ready' -shutdownnotify='systemd-notify --stopping'
 WorkingDirectory=/home/elmeri/bitcoin-extdrive
 
 

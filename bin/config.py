@@ -8,6 +8,58 @@ CURRENT_DIR = os.getcwd()
 
 ENABLE_TOR = True
 
+def save(path, config):
+    directory = os.path.dirname(path)
+    if directory:
+        os.makedirs(directory, exist_ok=True)
+
+    if path.endswith('.json'):
+        with open(path, 'w') as fp:
+            json.dump(config, fp, indent=4)
+            fp.write('\n')
+    else:
+        config_str = '\n'.join(f'{key}={value}' for key, value in config) + '\n'
+        with open(path, 'w') as fp:
+            fp.write(config_str)
+
+
+knots = [
+    ('chain', 'main'),
+    ('server', 1),
+    ('rest', 0),
+    ('disablewallet', 1),
+    ('txindex', 0),
+    ('coinstatsindex', 0),
+    ('blockfilterindex', 0),
+    ('peerblockfilters', 0),
+    ('prune', 550),
+    ('pruneduringinit', 24576),
+    ('dbcache', 24576),
+    ('par', 0),
+    ('checkblocks', 1),
+    ('checklevel', 0),
+    ('blocksonly', 1),
+    ('maxmempool', 5),
+    ('mempoolexpiry', 1),
+    ('persistmempool', 0),
+    ('listen', 0),
+    ('listenonion', 0),
+    ('discover', 0),
+    ('upnp', 0),
+    ('natpmp', 0),
+    ('onlynet', 'ipv4'),
+    ('onlynet', 'ipv6'),
+    ('dnsseed', 1),
+    ('fixedseeds', 1),
+    ('maxconnections', 64),
+    ('maxuploadtarget', 0),
+    ('port', 8335),
+    ('rpcbind', '127.0.0.1'),
+    ('rpcallowip', '127.0.0.1'),
+    ('rpcport', 8334),
+    ('consensusrules', 'rdts'),
+]
+
 bitcoin = [
     ('server', '1'),
     ('rest', '1'),
@@ -103,8 +155,8 @@ btcpayserver = [
 
 electrs = [
     ('auth', f'{bitcoindict["rpcuser"]}:{bitcoindict["rpcpassword"]}'),
-    ('daemon_rpc_addr', f'127.0.0.1:{bitcoindict["rpcport"]}')
-    ('daemon_p2p_addr', f'127.0.0.1:{bitcoindict["port"]}')
+    ('daemon_rpc_addr', f'127.0.0.1:{bitcoindict["rpcport"]}'),
+    ('daemon_p2p_addr', f'127.0.0.1:{bitcoindict["port"]}'),
     ('db_dir', 'data/electrs_db'),
     ('network', 'bitcoin'),
     ('electrum_rpc_addr', '127.0.0.1:50011'),
@@ -150,17 +202,7 @@ datum_gateway = {
     }
 }
 
-
-def save(path, config):
-    if config.endswith('.json'):
-        with open(path, 'w') as fp:
-            json.dump(config, fp, indent=4)
-    else:
-        config_str = '\n'.join(f'{key}={value}' for key, value in config) + '\n'
-        with open(path, 'w') as fp:
-            fp.write(config_str)
-
-
+save('config/knots.conf', knots)
 save('data/btcpayserver/Main/settings.config', btcpayserver)
 save('config/bitcoin.conf', bitcoin)
 save('config/electrumx.env', electrumx)
