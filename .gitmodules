@@ -28,3 +28,9 @@
 [submodule "pybitcoinkernel"]
 	path = pybitcoinkernel
 	url = https://github.com/elmeriniemela/pybitcoinkernel.git
+[submodule "bitwalkit"]
+	path = bitwalkit
+	url = https://github.com/elmeriniemela/bitwalkit.git
+[submodule "bitoplens"]
+	path = bitoplens
+	url = https://github.com/elmeriniemela/bitoplens
