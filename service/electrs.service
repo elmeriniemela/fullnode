@@ -17,3 +17,6 @@ TimeoutStopSec=900
 
 [Install]
 WantedBy=multi-user.target
+
+
+./fullnode/knots-electrs/target/release/electrs --conf=config/knots-electrs.toml

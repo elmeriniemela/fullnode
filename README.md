@@ -11,30 +11,12 @@ Expect host-specific assumptions (paths, usernames, system services, network set
 * `sudo pacman -S --needed tor zeromq autoconf automake boost gcc libevent libtool make pkgconf python sqlite cmake capnproto`
 * `sudo systemctl enable tor --now`
 * `sudo usermod -a -G tor elmeri`
-* Add to `/etc/tor/torrc`
-```
-# Allow bitcoind to automatically create a service accessible from tor network.
-ControlPort 9051
-CookieAuthentication 1
-CookieAuthFile /var/lib/tor/control_auth_cookie
-CookieAuthFileGroupReadable 1
-DataDirectoryGroupReadable 1
-
-# Manually create a ElectrumX service accessible from tor netowrk.
-HiddenServiceDir /var/lib/tor/electrumx/
-HiddenServicePort 50001 127.0.0.1:50001
-HiddenServicePort 50002 127.0.0.1:50002
-```
 * `git submodule update --init`
 * `cd bitcoin`
 * `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DENABLE_WALLET=OFF -DENABLE_IPC=OFF -DWITH_ZMQ=OFF -DENABLE_EXTERNAL_SIGNER=OFF -DBUILD_BITCOIN_BIN=OFF -DBUILD_DAEMON=ON -DBUILD_CLI=ON -DBUILD_TESTS=OFF -DBUILD_TX=OFF -DBUILD_UTIL=OFF -DBUILD_GUI=OFF -DBUILD_BENCH=OFF -DBUILD_FUZZ_BINARY=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DINSTALL_MAN=OFF`
 * `cmake --build build -j$(nproc)`
 * Source: https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md
 
-## Install electrumx dependencies:
-* `python3.12 -m venv electrumx-venv`
-* `cd electrumx/`
-* `../electrumx-venv/bin/python -m pip install .`
 
 ## electrs
 * Check hints from PKGBUILD via AUR: https://aur.archlinux.org/packages/electrs
@@ -80,16 +62,11 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `cd .. && mkdir config`
 * `./fullnode/bin/config.py`
 * `cat config/bitcoin.conf`
-* `cat config/electrumx.env`
 * `cat config/nbxplorer.config`
 * `cat data/btcpayserver/Main/settings.config`
 
-## Run bitcoind before starting electrumx:
+## Run bitcoind:
 * `./bitcoind.sh`
-
-## Usage:
-* `./electrumx_start.sh`
-* `./electrumx_stop.sh`
 
 ## Service
 * `sudo cp service/* /etc/systemd/system/`
@@ -101,12 +78,10 @@ HiddenServicePort 50002 127.0.0.1:50002
 * `electrum --oneserver --server 127.0.0.1:50001:t`
 
 ## Connect wallet via tor:
-* Get tor hostname: `sudo ./electrumx-onion-host.py`
 * Install tor
     * Linux: `sudo pacman -S tor`
     * Android download Orbot and add electrum to its services
 * Electrum -> Network -> Proxy: localhost:9050
-* `electrum --oneserver --server <tor-host-name>:50002:s`
 
 ## btcpayserver
 * `yay -S btcpayserver nbxplorer`

@@ -110,30 +110,7 @@ else:
         ('onlynet', 'ipv6'),
     ]
 
-# onion_host = subprocess.run("./electrumx-onion-host.py", shell=True, check=True, capture_output=True, encoding='utf-8').stdout.strip()
 bitcoindict = dict(bitcoin)
-
-electrumx = [
-    ('PEER_DISCOVERY', 'self'), # peer discovery is disabled and the server will only return itself in the peers list.
-    ('SERVICES', 'tcp://0.0.0.0:50001,ssl://0.0.0.0:50002,rpc://127.0.0.1:50000'),
-     #('REPORT_SERVICES', 'tcp://{onion_host}:50001,ssl://{onion_host}:50002'),
-    ('DAEMON_URL', f'http://{bitcoindict["rpcuser"]}:{bitcoindict["rpcpassword"]}@{bitcoindict["rpcbind"]}:{bitcoindict["rpcport"]}'),
-    ('USERNAME', 'elmeri'),
-    ('NET', 'mainnet'),
-    ('COIN', 'Bitcoin'),
-    ('ELECTRUMX', 'electrumx/electrumx_server'),
-    ('DB_DIRECTORY', 'data/electrum_db'),
-    ('FORCE_PROXY', True),
-    ('SSL_CERTFILE', os.path.join(CURRENT_DIR, 'config/electrumx-ssl.crt')),
-    ('SSL_KEYFILE', os.path.join(CURRENT_DIR, 'config/electrumx-ssl.key')),
-]
-if ENABLE_TOR:
-    electrumx += [
-        ('TOR_PROXY_HOST', 'localhost'),
-        ('TOR_PROXY_PORT', 9050),
-    ]
-
-electrumxdict = dict(electrumx)
 
 nbxplorer = [
     ('postgres', '"User ID=elmeri;Host=localhost;Database=nbxplorer"'),
@@ -163,9 +140,6 @@ electrs = [
     ('electrum_rpc_addr', '127.0.0.1:50011'),
     ('log_filters', 'INFO'),
 ]
-
-if not os.path.exists(electrumxdict['SSL_CERTFILE']):
-    subprocess.run(f'openssl req -new -newkey rsa:2048 -days 18250 -nodes -x509 -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com" -keyout {electrumxdict["SSL_KEYFILE"]} -out {electrumxdict["SSL_CERTFILE"]}', shell=True, check=True)
 
 datum_gateway = {
     "bitcoind": {
@@ -206,7 +180,6 @@ datum_gateway = {
 save('config/knots.conf', knots)
 save('data/btcpayserver/Main/settings.config', btcpayserver)
 save('config/bitcoin.conf', bitcoin)
-save('config/electrumx.env', electrumx)
 save('config/electrs.toml', electrs)
 save('config/nbxplorer.config', nbxplorer)
 save('config/datum_gateway.json', datum_gateway)
