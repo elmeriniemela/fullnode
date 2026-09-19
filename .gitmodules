@@ -9,16 +9,16 @@
 	url = https://github.com/lightninglabs/loop.git
 [submodule "datum_gateway"]
 	path = datum_gateway
-	url = git@github.com:OCEAN-xyz/datum_gateway.git
+	url = https://github.com/OCEAN-xyz/datum_gateway.git
 [submodule "electrs"]
 	path = electrs
-	url = git@github.com:romanz/electrs.git
+	url = https://github.com/romanz/electrs.git
 [submodule "elements"]
 	path = elements
-	url = git@github.com:ElementsProject/elements.git
+	url = https://github.com/ElementsProject/elements.git
 [submodule "lightning"]
 	path = lightning
-	url = git@github.com:ElementsProject/lightning.git
+	url = https://github.com/ElementsProject/lightning.git
 [submodule "bitcoinknots"]
 	path = bitcoinknots
 	url = https://github.com/bitcoinknots/bitcoin.git
