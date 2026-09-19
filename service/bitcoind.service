@@ -1,68 +1,51 @@
-# /etc/systemd/system/bitcoind.service
 [Unit]
 Description=Bitcoin daemon
 Documentation=https://github.com/bitcoin/bitcoin/blob/master/contrib/init/bitcoind.service
-
-# https://www.freedesktop.org/wiki/Software/systemd/NetworkTarget/
 After=network-online.target
 Wants=network-online.target
+RequiresMountsFor=/srv/bitcoin
+PartOf=bitcoin-apps.target
 
 [Service]
-ExecStart=/home/elmeri/bitcoin-extdrive/fullnode/bin/bitcoind.sh
-WorkingDirectory=/home/elmeri/bitcoin-extdrive
-
-
-# Make sure the config directory is readable by the service user
-PermissionsStartOnly=true
-ExecStartPre=/bin/chgrp elmeri /home/elmeri/bitcoin-extdrive
+ExecStart=/srv/bitcoin/fullnode/bin/bitcoind.sh
+WorkingDirectory=/srv/bitcoin
+Environment="HOME=/srv/bitcoin"
 
 # Process management
-####################
-
 Type=notify
 NotifyAccess=all
 PIDFile=/run/bitcoind/bitcoind.pid
 
 Restart=on-failure
+RestartSec=10
 TimeoutStartSec=infinity
 TimeoutStopSec=600
 
 # Directory creation and permissions
-####################################
-
-# Run as elmeri:elmeri
-User=elmeri
-Group=elmeri
-
-# /run/bitcoind
+User=bitcoin
+Group=bitcoin
 RuntimeDirectory=bitcoind
 RuntimeDirectoryMode=0710
 
 # Hardening measures
-####################
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/srv/bitcoin/data
+ReadOnlyPaths=/srv/bitcoin/config /srv/bitcoin/fullnode
 
-# Provide a private /tmp and /var/tmp.
 PrivateTmp=true
-
-# Mount /usr, /boot/ and /etc read-only for the process.
-ProtectSystem=full
-
-# Deny access to /home, /root and /run/user
-ProtectHome=false
-
-# Disallow the process and all of its children to gain
-# new privileges through execve().
-NoNewPrivileges=true
-
-# Use a new /dev namespace only populated with API pseudo devices
-# such as /dev/null, /dev/zero and /dev/random.
 PrivateDevices=true
-
-# Deny the creation of writable and executable memory mappings.
+NoNewPrivileges=true
 MemoryDenyWriteExecute=true
-
-# Restrict ABIs to help ensure MemoryDenyWriteExecute is enforced
 SystemCallArchitectures=native
+SystemCallFilter=@system-service
+CapabilityBoundingSet=
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=bitcoin-apps.target

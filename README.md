@@ -1,92 +1,174 @@
+# Bitcoin Full Node Stack
 
-# Personal 'fullnode'
-DISCLAIMER: This repository is for my personal deployment of Bitcoin-related software on my own infrastructure.
+Hardened deployment runbook for Bitcoin Core (`bitcoind`) and Electrs on Arch Linux, running on a dedicated encrypted volume mounted at `/srv/bitcoin` under the `bitcoin` system user.
 
-It is not intended to be a generic installer, production-ready distribution, or security-hardened template for other environments.
+## Directory Layout
 
-Expect host-specific assumptions (paths, usernames, system services, network settings) that may not apply outside my setup.
+All node components run inside the `/srv/bitcoin` mountpoint:
+```text
+/srv/bitcoin/
+├── config/             # Configuration files (mode 0700, files 0600)
+│   ├── bitcoin.conf
+│   └── electrs.toml
+├── data/               # Persistent data and indices (mode 0700)
+│   ├── blocks/         # Bitcoin block storage
+│   ├── chainstate/     # Bitcoin UTXO set
+│   └── electrs_db/     # RocksDB Electrs index
+└── fullnode/           # Repository checkout (mode 0750)
+    ├── bin/            # Helper scripts and config generator
+    ├── bitcoin/        # Bitcoin Core source and build
+    ├── electrs/        # Electrs source and build
+    └── service/        # Systemd service and target units
+```
 
-## Build bitcoind
-* Tor is for securely accessing the node from outside networks. ZeroMQ is for lnd notifications.
-* `sudo pacman -S --needed tor zeromq autoconf automake boost gcc libevent libtool make pkgconf python sqlite cmake capnproto`
-* `sudo systemctl enable tor --now`
-* `sudo usermod -a -G tor elmeri`
-* `git submodule update --init`
-* `cd bitcoin`
-* `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DENABLE_WALLET=OFF -DENABLE_IPC=OFF -DWITH_ZMQ=OFF -DENABLE_EXTERNAL_SIGNER=OFF -DBUILD_BITCOIN_BIN=OFF -DBUILD_DAEMON=ON -DBUILD_CLI=ON -DBUILD_TESTS=OFF -DBUILD_TX=OFF -DBUILD_UTIL=OFF -DBUILD_GUI=OFF -DBUILD_BENCH=OFF -DBUILD_FUZZ_BINARY=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DINSTALL_MAN=OFF`
-* `cmake --build build -j$(nproc)`
-* Source: https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md
+## 1. Build Instructions
 
+### Dependencies
+Install build tools and libraries:
+```bash
+sudo pacman -S --needed base-devel cmake boost libevent sqlite python capnproto rust clang tor
+```
 
-## electrs
-* Check hints from PKGBUILD via AUR: https://aur.archlinux.org/packages/electrs
-* `sudo pacman -S --needed clang gcc-libs cmake rust`
-* `export CXXFLAGS="$CXXFLAGS -include cstdint"`
-* `cargo build --bins --tests --release --locked`
+### Build Bitcoin Core
+Build `bitcoind` and `bitcoin-cli` using CMake:
+```bash
+cd /srv/bitcoin/fullnode/bitcoin
+cmake -S . -B build \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DENABLE_WALLET=OFF \
+  -DENABLE_IPC=OFF \
+  -DWITH_ZMQ=OFF \
+  -DENABLE_EXTERNAL_SIGNER=OFF \
+  -DBUILD_BITCOIN_BIN=OFF \
+  -DBUILD_DAEMON=ON \
+  -DBUILD_CLI=ON \
+  -DBUILD_TESTS=OFF \
+  -DBUILD_TX=OFF \
+  -DBUILD_UTIL=OFF \
+  -DBUILD_GUI=OFF \
+  -DBUILD_BENCH=OFF \
+  -DBUILD_FUZZ_BINARY=OFF \
+  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+  -DINSTALL_MAN=OFF
 
+cmake --build build -j$(nproc)
+```
 
-## DATUM Gateway
-* `cd datum_gateway`
-* `sudo pacman -Syu base-devel cmake pkgconf curl jansson libsodium libmicrohttpd psmisc`
-* `cmake . && make`
+### Build Electrs
+Build the release binary with Cargo:
+```bash
+cd /srv/bitcoin/fullnode/electrs
+cargo build --release --locked
+```
 
+## 2. Tor Setup
 
-## Lightning Network Daemon (lnd)
-* `mkdir go`
-* `sudo pacman -S go`
-* `cd lnd`
-* `GOPATH=~/bitcoin-extdrive/fullnode/go make install tags="signrpc walletrpc chainrpc invoicesrpc"`
-* Update `git pull && make clean && make` and run command above
+Enable and start the system Tor daemon:
+```bash
+sudo systemctl enable tor --now
+```
+Bitcoin Core connects to the local SOCKS5 proxy on `127.0.0.1:9050` to route peer and hidden service traffic securely.
 
-## Lightning Loop
-* `cd loop/cmd`
-* `GOPATH=~/bitcoin-extdrive/fullnode/go go install ./...`
+## 3. Configuration Generation
 
+Generate secure configuration files with owner-only (`0600`) permissions:
+```bash
+sudo -u bitcoin python3 /srv/bitcoin/fullnode/bin/config.py
+```
+This generates:
+- `/srv/bitcoin/config/bitcoin.conf`: RPC bound strictly to `127.0.0.1:8332`, allowed IP `127.0.0.1`, public P2P listening on `0.0.0.0:8333`, Tor proxy enabled, and RPC credentials generated with Python `secrets`.
+- `/srv/bitcoin/config/electrs.toml`: Authenticated against local Bitcoin Core RPC on `127.0.0.1:8332`, Electrum RPC bound to `127.0.0.1:50011`, and RocksDB index stored at `/srv/bitcoin/data/electrs_db`.
 
+Verify permissions:
+```bash
+ls -la /srv/bitcoin/config
+# Confirm permissions are -rw------- (0600) owned by bitcoin:bitcoin
+```
 
-## Core Lightning (CLN)
-* `sudo pacman --needed -S uv jq autoconf automake libtool net-tools gettext lowdown valgrind shellcheck cppcheck lowdown cargo rustfmt protobuf`
-* `uv sync --all-extras --all-groups --frozen`
-* `./configure CWARNFLAGS="-Wall -Wundef -Wmissing-prototypes -Wmissing-declarations -Wstrict-prototypes -Wold-style-definition -Werror -Wno-maybe-uninitialized -Wshadow=local -Wno-error=discarded-qualifiers"`
-* `uv run make`
-* `uv run make check VALGRIND=0`
+## 4. Install Systemd Services
 
+Service units are located in [`service/`](service/):
+- `bitcoin-apps.target`: Coordinates starting and stopping the entire Bitcoin stack.
+- `bitcoind.service`: Hardened unit running `bitcoind` under user `bitcoin` with `ProtectHome=true`, `ProtectSystem=strict`, and writable paths restricted to `/srv/bitcoin/data`.
+- `electrs.service`: Hardened unit running `electrs`, ordered after `bitcoind.service`.
 
-## Elements Project blockchain platform (Liquid network)
-* `mkdir`
+Install the units to `/etc/systemd/system/`:
+```bash
+sudo cp /srv/bitcoin/fullnode/service/bitcoin-apps.target /etc/systemd/system/
+sudo cp /srv/bitcoin/fullnode/service/bitcoind.service /etc/systemd/system/
+sudo cp /srv/bitcoin/fullnode/service/electrs.service /etc/systemd/system/
 
+sudo systemctl daemon-reload
+sudo systemctl enable bitcoind.service electrs.service
+```
 
+## 5. Operations & Runbook
 
+Because `/srv/bitcoin` is an encrypted volume configured with `noauto` in crypttab and fstab, services do not start automatically at boot.
 
-## Cofigure services
-* `cd .. && mkdir config`
-* `./fullnode/bin/config.py`
-* `cat config/bitcoin.conf`
-* `cat config/nbxplorer.config`
-* `cat data/btcpayserver/Main/settings.config`
+### Post-Boot Startup
+1. Unlock the LUKS volume:
+   ```bash
+   sudo systemctl start systemd-cryptsetup@bitcoin.service
+   ```
+2. Mount the filesystem:
+   ```bash
+   sudo mount /srv/bitcoin
+   ```
+3. Start the node stack:
+   ```bash
+   sudo systemctl start bitcoin-apps.target
+   ```
 
-## Run bitcoind:
-* `./bitcoind.sh`
+### Check Status & Logs
+```bash
+systemctl status bitcoin-apps.target
+journalctl -u bitcoind.service -f
+journalctl -u electrs.service -f
+```
 
-## Service
-* `sudo cp service/* /etc/systemd/system/`
-* `sudo systemctl daemon-reload`
-* `sudo systemctl enable bitcoind --now && journalctl -u bitcoind.service -f`
-* `sudo systemctl enable electrs --now && journalctl -u electrs.service -f`
+### Restarting the Stack
+Restarting the target restarts all member services:
+```bash
+sudo systemctl restart bitcoin-apps.target
+```
 
-## Connect wallet:
-* `electrum --oneserver --server 127.0.0.1:50001:t`
+### Stopping and Locking
+```bash
+sudo systemctl stop bitcoin-apps.target
+sudo umount /srv/bitcoin
+sudo systemctl stop systemd-cryptsetup@bitcoin.service
+```
 
-## Connect wallet via tor:
-* Install tor
-    * Linux: `sudo pacman -S tor`
-    * Android download Orbot and add electrum to its services
-* Electrum -> Network -> Proxy: localhost:9050
+## 6. Wallet Connection
 
-## btcpayserver
-* `yay -S btcpayserver nbxplorer`
-* `sudo cp nbxplorer.service /etc/systemd/system/`
-* `sudo cp btcpayserver.service /etc/systemd/system/`
-* `sudo systemctl enable nbxplorer --now && journalctl -u nbxplorer.service -f`
-* `sudo systemctl enable btcpayserver --now && journalctl -u btcpayserver.service -f`
+### Local / LAN via Electrum
+- Raw TCP (loopback): `127.0.0.1:50011:t`
+- SSL via Nginx reverse proxy: `electrs.eniemela.fi:50012:s`
 
+Command-line test:
+```bash
+electrum --oneserver --server 127.0.0.1:50011:t
+```
+
+### Via Tor
+Configure Electrum proxy to `127.0.0.1:9050` (SOCKS5) under Network settings.
+
+## 7. Upgrades
+
+### Upgrading Bitcoin Core
+```bash
+cd /srv/bitcoin/fullnode/bitcoin
+git fetch origin --tags
+git checkout <tag>
+cmake --build build -j$(nproc)
+sudo systemctl restart bitcoin-apps.target
+```
+
+### Upgrading Electrs
+```bash
+cd /srv/bitcoin/fullnode/electrs
+git pull origin master
+cargo build --release --locked
+sudo systemctl restart electrs.service
+```

@@ -1,2 +1,4 @@
 #!/bin/bash
-./fullnode/go/bin/lncli --bitcoind.config=../config/bitcoin.conf $@
+set -euo pipefail
+
+exec /srv/bitcoin/fullnode/go/bin/lncli --bitcoind.config=/srv/bitcoin/config/bitcoin.conf "$@"

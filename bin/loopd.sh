@@ -1,3 +1,4 @@
 #!/bin/bash
-./fullnode/go/bin/loopd
+set -euo pipefail
 
+exec /srv/bitcoin/fullnode/go/bin/loopd "$@"

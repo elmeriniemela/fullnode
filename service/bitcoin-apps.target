@@ -1,0 +1,4 @@
+[Unit]
+Description=Bitcoin full-node applications
+Requires=bitcoind.service electrs.service
+After=bitcoind.service electrs.service

@@ -1,20 +1,43 @@
 [Unit]
-Description=loopd
+Description=Lightning Loop Daemon (loopd)
 Requires=lnd.service
 After=lnd.service
-
-
-[Service]
-User=elmeri
-WorkingDirectory=/home/elmeri/bitcoin-extdrive
-ExecStart=/home/elmeri/bitcoin-extdrive/fullnode/bin/loopd.sh
-Restart=always
-RestartSec=5
-StartLimitInterval=400
+RequiresMountsFor=/srv/bitcoin
+PartOf=bitcoin-apps.target
+StartLimitIntervalSec=400
 StartLimitBurst=3
 
-# Configures the time to wait before service is stopped forcefully.
+[Service]
+ExecStart=/srv/bitcoin/fullnode/bin/loopd.sh
+WorkingDirectory=/srv/bitcoin
+Environment="HOME=/srv/bitcoin"
+
+Restart=always
+RestartSec=5
 TimeoutStopSec=900
 
+User=bitcoin
+Group=bitcoin
+
+# Hardening measures
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/srv/bitcoin/data
+ReadOnlyPaths=/srv/bitcoin/config /srv/bitcoin/fullnode
+
+PrivateTmp=true
+PrivateDevices=true
+NoNewPrivileges=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+CapabilityBoundingSet=
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+
 [Install]
-WantedBy=multi-user.target
+WantedBy=bitcoin-apps.target

@@ -1,22 +1,44 @@
-# /etc/systemd/system/electrs.service
-
 [Unit]
-Description=electrs
-
-[Service]
-User=elmeri
-WorkingDirectory=/home/elmeri/bitcoin-extdrive
-ExecStart=/home/elmeri/bitcoin-extdrive/fullnode/electrs/target/release/electrs --conf=config/electrs.toml
-Restart=always
-RestartSec=5
-StartLimitInterval=400
+Description=Electrs (Electrum Server in Rust)
+Documentation=https://github.com/romanz/electrs
+Requires=bitcoind.service
+After=bitcoind.service
+RequiresMountsFor=/srv/bitcoin
+PartOf=bitcoin-apps.target
+StartLimitIntervalSec=400
 StartLimitBurst=3
 
-# Configures the time to wait before service is stopped forcefully.
+[Service]
+ExecStart=/srv/bitcoin/fullnode/electrs/target/release/electrs --conf=/srv/bitcoin/config/electrs.toml
+WorkingDirectory=/srv/bitcoin
+Environment="HOME=/srv/bitcoin"
+
+Restart=always
+RestartSec=5
 TimeoutStopSec=900
 
+User=bitcoin
+Group=bitcoin
+
+# Hardening measures
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/srv/bitcoin/data
+ReadOnlyPaths=/srv/bitcoin/config /srv/bitcoin/fullnode
+
+PrivateTmp=true
+PrivateDevices=true
+NoNewPrivileges=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+CapabilityBoundingSet=
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+
 [Install]
-WantedBy=multi-user.target
-
-
-./fullnode/knots-electrs/target/release/electrs --conf=config/knots-electrs.toml
+WantedBy=bitcoin-apps.target

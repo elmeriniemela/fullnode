@@ -1,185 +1,121 @@
 #!/usr/bin/env python3
-import subprocess
-import secrets
 import os
+import sys
 import json
+import secrets
 
-CURRENT_DIR = os.getcwd()
-
+DEFAULT_BASE_DIR = os.environ.get(
+    "BITCOIN_DIR",
+    "/srv/bitcoin"
+    if os.path.exists("/srv/bitcoin")
+    else os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")),
+)
 ENABLE_TOR = True
+
 
 def save(path, config):
     directory = os.path.dirname(path)
     if directory:
-        os.makedirs(directory, exist_ok=True)
+        os.makedirs(directory, mode=0o700, exist_ok=True)
 
-    if path.endswith('.json'):
-        with open(path, 'w') as fp:
+    if path.endswith(".json"):
+        with open(path, "w") as fp:
             json.dump(config, fp, indent=4)
-            fp.write('\n')
+            fp.write("\n")
+    elif path.endswith(".toml"):
+        config_str = (
+            "\n".join(
+                f"{key} = {json.dumps(value)}"
+                if isinstance(value, str)
+                else f"{key} = {value}"
+                for key, value in config
+            )
+            + "\n"
+        )
+        with open(path, "w") as fp:
+            fp.write(config_str)
     else:
-        config_str = '\n'.join(f'{key}={value}' for key, value in config) + '\n'
-        with open(path, 'w') as fp:
+        config_str = (
+            "\n".join(f"{key}={value}" for key, value in config) + "\n"
+        )
+        with open(path, "w") as fp:
             fp.write(config_str)
 
+    os.chmod(path, 0o600)
 
-knots = [
-    ('chain', 'main'),
-    ('assumevalid', '00000000000000000000611fd22f2df7c8fbd0688745c3a6c3bb5109cc2a12cb'),
-    ('server', 1),
-    ('rest', 0),
-    ('disablewallet', 1),
-    ('txindex', 0),
-    ('coinstatsindex', 0),
-    ('blockfilterindex', 0),
-    ('peerblockfilters', 0),
-    ('prune', 550),
-    ('pruneduringinit', 24576),
-    ('dbcache', 24576),
-    ('par', 0),
-    ('checkblocks', 1),
-    ('checklevel', 0),
-    ('blocksonly', 1),
-    ('maxmempool', 5),
-    ('mempoolexpiry', 1),
-    ('persistmempool', 0),
-    ('listen', 0),
-    ('listenonion', 0),
-    ('discover', 0),
-    ('upnp', 0),
-    ('natpmp', 0),
-    ('onlynet', 'ipv4'),
-    ('onlynet', 'ipv6'),
-    ('dnsseed', 1),
-    ('fixedseeds', 1),
-    ('maxconnections', 64),
-    ('maxuploadtarget', 0),
-    ('port', 8335),
-    ('rpcbind', '127.0.0.1'),
-    ('rpcallowip', '127.0.0.1'),
-    ('rpcport', 8334),
-    ('consensusrules', 'rdts'),
-]
 
-bitcoin = [
-    ('server', '1'),
-    ('rest', '1'),
-    ('maxmempool', 1024*2), # store 2gb of low fee transactions instead of 0.3
-    ('upnp', 0), # disable UPnP, we have port forwarding
-    ('txindex', 1),
-    ('networkactive', 1), # Enable all P2P network activity (default: 1). Can be changed by the setnetworkactive RPC command
-    ('listen', 1),
-    ('bind', '0.0.0.0'),
-    ('port', 8333),
-    ('datacarrier', 1), # Allow OP_RETURN transactions
-    ('datacarriersize', 100000), # 100kb of data in a single transaction
-    ('minrelaytxfee', '0.00000001'),
-    ('incrementalrelayfee', '0.00000001'),
-    ('dustrelayfee', '0.00000001'),
-    ('maxconnections', 64),
-    ('dbcache', 1024*8), # 8gb of cache
-    ('par', 4), # number of script verification threads used during block validation
-    ('checkblocks', 10), # how many blocks to check at startup
-    ('checklevel', 4), # How thorough the block verification of -checkblocks is: (0-4, default: 3)
-    # "level 0 reads the blocks from disk",
-    # "level 1 verifies block validity",
-    # "level 2 verifies undo data",
-    # "level 3 checks disconnection of tip blocks",
-    # "level 4 tries to reconnect the blocks",
-    # "each level includes the checks of the previous levels",
-    ('disablewallet', 1),
-    ('rpcuser', 'elmeri'),
-    ('rpcpassword', secrets.token_urlsafe(32)),
-    ('rpcbind', '127.0.0.1'),
-    ('rpcallowip', '192.168.0.0/16'),
-    ('rpcport', 8332),
-    ('zmqpubrawblock', 'tcp://127.0.0.1:28332'),
-    ('zmqpubrawtx', 'tcp://127.0.0.1:28333'),
-    ('whitelist', '127.0.0.1'),
-    ('debug', 'rpc'),
-]
-if ENABLE_TOR:
-    bitcoin += [
-        ('proxy', '127.0.0.1:9050'), # Tor Proxy
-        ('debug', 'tor'), # enable Tor debug logging.
-    ]
-else:
-    bitcoin += [
-        ('listenonion', '0'),
-        ('onlynet', 'ipv4'),
-        ('onlynet', 'ipv6'),
+def build_configs(base_dir):
+    bitcoin = [
+        ("server", "1"),
+        ("rest", "1"),
+        ("maxmempool", 1024 * 2),  # 2 GB mempool
+        ("upnp", 0),
+        ("txindex", 1),
+        ("networkactive", 1),
+        ("listen", 1),
+        ("bind", "0.0.0.0"),
+        ("port", 8333),
+        ("datacarrier", 1),
+        ("datacarriersize", 100000),
+        ("minrelaytxfee", "0.00000001"),
+        ("incrementalrelayfee", "0.00000001"),
+        ("dustrelayfee", "0.00000001"),
+        ("maxconnections", 64),
+        ("dbcache", 1024 * 8),  # 8 GB dbcache
+        ("par", 4),
+        ("checkblocks", 10),
+        ("checklevel", 4),
+        ("disablewallet", 1),
+        ("rpcuser", "bitcoin"),
+        ("rpcpassword", secrets.token_urlsafe(32)),
+        ("rpcbind", "127.0.0.1"),
+        ("rpcallowip", "127.0.0.1"),
+        ("rpcport", 8332),
+        ("zmqpubrawblock", "tcp://127.0.0.1:28332"),
+        ("zmqpubrawtx", "tcp://127.0.0.1:28333"),
+        ("whitelist", "127.0.0.1"),
+        ("debug", "rpc"),
     ]
 
-bitcoindict = dict(bitcoin)
+    if ENABLE_TOR:
+        bitcoin += [
+            ("proxy", "127.0.0.1:9050"),
+            ("debug", "tor"),
+        ]
+    else:
+        bitcoin += [
+            ("listenonion", "0"),
+            ("onlynet", "ipv4"),
+            ("onlynet", "ipv6"),
+        ]
 
-nbxplorer = [
-    ('postgres', '"User ID=elmeri;Host=localhost;Database=nbxplorer"'),
-    ('btcrpcauth', f'{bitcoindict["rpcuser"]}:{bitcoindict["rpcpassword"]}'),
-    ('btcrpcurl', f'http://127.0.0.1:{bitcoindict["rpcport"]}'),
-    ('btcnodeendpoint', f'127.0.0.1:{bitcoindict["port"]}'),
-]
+    bitcoindict = dict(bitcoin)
 
-nbxplorerdict = dict(nbxplorer)
+    electrs = [
+        ("auth", f'{bitcoindict["rpcuser"]}:{bitcoindict["rpcpassword"]}'),
+        ("daemon_rpc_addr", f'127.0.0.1:{bitcoindict["rpcport"]}'),
+        ("daemon_p2p_addr", f'127.0.0.1:{bitcoindict["port"]}'),
+        ("db_dir", os.path.join(base_dir, "data", "electrs_db")),
+        ("network", "bitcoin"),
+        ("electrum_rpc_addr", "127.0.0.1:50011"),
+        ("log_filters", "INFO"),
+    ]
 
-certthumbprint = subprocess.run('openssl x509 -noout -fingerprint -sha256 -in ~/.lnd/tls.cert | sed -e "s/.*=//;s/://g"', shell=True, check=True, stdout=subprocess.PIPE).stdout.decode().strip()
-btcpayserver = [
-    ('network', 'mainnet'),
-    ('port', 23000),
-    ('bind', "127.0.0.1"),
-    ('explorerpostgres', nbxplorerdict['postgres']),
-    ('postgres', '"User ID=elmeri;Host=localhost;Database=btcpayserver"'),
-    ('btclightning', f'"type=lnd-rest;server=https://127.0.0.1:8080/;macaroonfilepath=/home/elmeri/.lnd/data/chain/bitcoin/mainnet/admin.macaroon;certthumbprint={certthumbprint}"'),
-]
+    return bitcoin, electrs
 
-electrs = [
-    ('auth', f'{bitcoindict["rpcuser"]}:{bitcoindict["rpcpassword"]}'),
-    ('daemon_rpc_addr', f'127.0.0.1:{bitcoindict["rpcport"]}'),
-    ('daemon_p2p_addr', f'127.0.0.1:{bitcoindict["port"]}'),
-    ('db_dir', 'data/electrs_db'),
-    ('network', 'bitcoin'),
-    ('electrum_rpc_addr', '127.0.0.1:50011'),
-    ('log_filters', 'INFO'),
-]
 
-datum_gateway = {
-    "bitcoind": {
-        "rpcuser": bitcoindict["rpcuser"],
-        "rpcpassword": bitcoindict["rpcpassword"],
-        "rpcurl": f'http://127.0.0.1:{bitcoindict["rpcport"]}',
-        "notify_fallback": True
-    },
-    "stratum": {
-        "listen_port": 23334
-    },
-    "mining": {
-        "pool_address": "put your own Bitcoin invoice address here",
-        "coinbase_tag_primary": "DATUM Gateway",
-        "coinbase_tag_secondary": "DATUM User"
-    },
-    "api": {
-        "admin_password": secrets.token_urlsafe(32),
-        "listen_port": 7152,
-        "modify_conf": False
-    },
-    "logger": {
-        "log_to_console": True,
-        "log_to_file": False,
-        "log_file": "/var/log/datum.log",
-        "log_rotate_daily": True,
-        "log_level_console": 2,
-        "log_level_file": 1
-    },
-    "datum": {
-        "pool_pass_workers": True,
-        "pool_pass_full_users": True,
-        "pooled_mining_only": False, # if connection to OCEAN dies, switch to lotto mining
-        "pool_host": "", # lotto-mining.
-    }
-}
+if __name__ == "__main__":
+    base_dir = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_BASE_DIR
 
-save('config/knots.conf', knots)
-save('data/btcpayserver/Main/settings.config', btcpayserver)
-save('config/bitcoin.conf', bitcoin)
-save('config/electrs.toml', electrs)
-save('config/nbxplorer.config', nbxplorer)
-save('config/datum_gateway.json', datum_gateway)
+    config_dir = os.path.join(base_dir, "config")
+    os.makedirs(config_dir, mode=0o700, exist_ok=True)
+
+    bitcoin, electrs = build_configs(base_dir)
+
+    bitcoin_conf_path = os.path.join(config_dir, "bitcoin.conf")
+    electrs_toml_path = os.path.join(config_dir, "electrs.toml")
+
+    save(bitcoin_conf_path, bitcoin)
+    save(electrs_toml_path, electrs)
+
+    print(f"Generated configuration files with 0600 permissions in {config_dir}")
