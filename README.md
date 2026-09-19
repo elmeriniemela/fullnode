@@ -26,28 +26,33 @@ All node components run inside the `/srv/bitcoin` mountpoint:
 ### Dependencies
 Install build tools and libraries:
 ```bash
-sudo pacman -S --needed base-devel cmake boost libevent sqlite python capnproto rust clang tor
+sudo pacman -S --needed base-devel cmake boost libevent sqlite python capnproto rust clang tor zeromq jq
 ```
 
 ### Build Bitcoin Core
-Build `bitcoind` and `bitcoin-cli` using CMake:
+Build all node components, utilities, wallet, and libraries using CMake:
 ```bash
 cd /srv/bitcoin/fullnode/bitcoin
 cmake -S . -B build \
   -DCMAKE_BUILD_TYPE=Release \
-  -DENABLE_WALLET=OFF \
-  -DENABLE_IPC=OFF \
-  -DWITH_ZMQ=OFF \
-  -DENABLE_EXTERNAL_SIGNER=OFF \
-  -DBUILD_BITCOIN_BIN=OFF \
+  -DENABLE_WALLET=ON \
+  -DBUILD_WALLET_TOOL=ON \
+  -DWITH_ZMQ=ON \
+  -DENABLE_IPC=ON \
+  -DENABLE_EXTERNAL_SIGNER=ON \
+  -DBUILD_BITCOIN_BIN=ON \
   -DBUILD_DAEMON=ON \
   -DBUILD_CLI=ON \
+  -DBUILD_TX=ON \
+  -DBUILD_UTIL=ON \
+  -DBUILD_UTIL_CHAINSTATE=ON \
+  -DBUILD_KERNEL_LIB=ON \
+  -DWITH_EMBEDDED_ASMAP=ON \
+  -DWITH_USDT=ON \
   -DBUILD_TESTS=OFF \
-  -DBUILD_TX=OFF \
-  -DBUILD_UTIL=OFF \
-  -DBUILD_GUI=OFF \
   -DBUILD_BENCH=OFF \
   -DBUILD_FUZZ_BINARY=OFF \
+  -DBUILD_GUI=OFF \
   -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
   -DINSTALL_MAN=OFF
 
@@ -76,7 +81,7 @@ Generate secure configuration files with owner-only (`0600`) permissions:
 sudo -u bitcoin python3 /srv/bitcoin/fullnode/bin/config.py
 ```
 This generates:
-- `/srv/bitcoin/config/bitcoin.conf`: Clearnet P2P listening on `0.0.0.0:8333` and `[::]:8333`, 256 connections, 1000 MB mempool, ASMap bucketing, 16 RPC threads, 64 workqueue, RPC bound to `127.0.0.1:8332` with LAN allowed subnet `192.168.0.0/16`, and RPC credentials.
+- `/srv/bitcoin/config/bitcoin.conf`: Clearnet P2P listening on `0.0.0.0:8333` and `[::]:8333`, 256 connections, 1000 MB mempool, ASMap bucketing, wallet enabled (`disablewallet=0`), 16 RPC threads, 64 workqueue, RPC bound to `127.0.0.1:8332` with allowed IP `127.0.0.1`, and RPC credentials.
 - `/srv/bitcoin/config/electrs.toml`: Authenticated against local Bitcoin Core RPC on `127.0.0.1:8332`, Electrum RPC on `127.0.0.1:50011`, RocksDB parallelism (`db_parallelism=4`), extended JSON-RPC timeouts (`jsonrpc_timeout_secs=60`), index lookup limits (`index_lookup_limit=1000`), auto-reindex enabled, Prometheus monitoring on `127.0.0.1:4224`, and index stored at `/srv/bitcoin/data/electrs_db`.
 
 Verify permissions:
