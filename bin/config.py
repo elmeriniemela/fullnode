@@ -10,7 +10,7 @@ DEFAULT_BASE_DIR = os.environ.get(
     if os.path.exists("/srv/bitcoin")
     else os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")),
 )
-ENABLE_TOR = True
+ENABLE_TOR = False
 
 
 def save(path, config):
@@ -24,12 +24,7 @@ def save(path, config):
             fp.write("\n")
     elif path.endswith(".toml"):
         config_str = (
-            "\n".join(
-                f"{key} = {json.dumps(value)}"
-                if isinstance(value, str)
-                else f"{key} = {value}"
-                for key, value in config
-            )
+            "\n".join(f"{key} = {json.dumps(value)}" for key, value in config)
             + "\n"
         )
         with open(path, "w") as fp:
@@ -45,43 +40,31 @@ def save(path, config):
 
 
 def build_configs(base_dir):
+    rpc_user = os.environ.get("BITCOIN_RPC_USER", "elmeri")
+    rpc_password = os.environ.get("BITCOIN_RPC_PASSWORD") or secrets.token_urlsafe(32)
+
     bitcoin = [
-        ("server", "1"),
         ("rest", "1"),
-        ("maxmempool", 1024 * 2),  # 2 GB mempool
-        ("upnp", 0),
-        ("txindex", 1),
-        ("networkactive", 1),
-        ("listen", 1),
-        ("bind", "0.0.0.0"),
-        ("port", 8333),
-        ("datacarrier", 1),
-        ("datacarriersize", 100000),
-        ("minrelaytxfee", "0.00000001"),
-        ("incrementalrelayfee", "0.00000001"),
+        ("upnp", "0"),
+        ("txindex", "1"),
+        ("networkactive", "1"),
         ("dustrelayfee", "0.00000001"),
-        ("maxconnections", 64),
-        ("dbcache", 1024 * 8),  # 8 GB dbcache
-        ("par", 4),
-        ("checkblocks", 10),
-        ("checklevel", 4),
-        ("disablewallet", 1),
-        ("rpcuser", "bitcoin"),
-        ("rpcpassword", secrets.token_urlsafe(32)),
+        ("par", "4"),
+        ("checkblocks", "10"),
+        ("checklevel", "4"),
+        ("disablewallet", "1"),
+        ("rpcuser", rpc_user),
+        ("rpcpassword", rpc_password),
         ("rpcbind", "127.0.0.1"),
         ("rpcallowip", "127.0.0.1"),
-        ("rpcport", 8332),
+        ("rpcport", "8332"),
         ("zmqpubrawblock", "tcp://127.0.0.1:28332"),
         ("zmqpubrawtx", "tcp://127.0.0.1:28333"),
         ("whitelist", "127.0.0.1"),
-        ("debug", "rpc"),
     ]
 
     if ENABLE_TOR:
-        bitcoin += [
-            ("proxy", "127.0.0.1:9050"),
-            ("debug", "tor"),
-        ]
+        bitcoin.append(("proxy", "127.0.0.1:9050"))
     else:
         bitcoin += [
             ("listenonion", "0"),
@@ -89,16 +72,50 @@ def build_configs(base_dir):
             ("onlynet", "ipv6"),
         ]
 
+    bitcoin += [
+        ("listen", "1"),
+        ("bind", "0.0.0.0:8333"),
+        ("bind", "[::]:8333"),
+        ("natpmp", "0"),
+        ("maxconnections", "256"),
+        ("asmap", "latest_asmap.dat"),
+        ("v2transport", "1"),
+        ("maxuploadtarget", "0"),
+        ("blocksonly", "0"),
+        ("whitelistforcerelay", "1"),
+        ("whitelistrelay", "1"),
+        ("privatebroadcast", "0"),
+        ("txreconciliation", "0"),
+        ("maxmempool", "1000"),
+        ("mempoolexpiry", "336"),
+        ("persistmempool", "1"),
+        ("minrelaytxfee", "0.00000010"),
+        ("incrementalrelayfee", "0.00000010"),
+        ("datacarrier", "1"),
+        ("datacarriersize", "83"),
+        ("maxsendbuffer", "5000"),
+        ("maxreceivebuffer", "5000"),
+        ("dbcache", "450"),
+        ("server", "1"),
+        ("rpcthreads", "16"),
+        ("rpcworkqueue", "64"),
+    ]
+
     bitcoindict = dict(bitcoin)
 
     electrs = [
         ("auth", f'{bitcoindict["rpcuser"]}:{bitcoindict["rpcpassword"]}'),
         ("daemon_rpc_addr", f'127.0.0.1:{bitcoindict["rpcport"]}'),
-        ("daemon_p2p_addr", f'127.0.0.1:{bitcoindict["port"]}'),
         ("db_dir", os.path.join(base_dir, "data", "electrs_db")),
         ("network", "bitcoin"),
         ("electrum_rpc_addr", "127.0.0.1:50011"),
         ("log_filters", "INFO"),
+        ("monitoring_addr", "127.0.0.1:4224"),
+        ("db_parallelism", 4),
+        ("wait_duration_secs", 5),
+        ("jsonrpc_timeout_secs", 60),
+        ("index_lookup_limit", 1000),
+        ("auto_reindex", True),
     ]
 
     return bitcoin, electrs

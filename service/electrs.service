@@ -5,8 +5,7 @@ Requires=bitcoind.service
 After=bitcoind.service
 RequiresMountsFor=/srv/bitcoin
 PartOf=bitcoin-apps.target
-StartLimitIntervalSec=400
-StartLimitBurst=3
+StartLimitIntervalSec=0
 
 [Service]
 ExecStart=/srv/bitcoin/fullnode/electrs/target/release/electrs --conf=/srv/bitcoin/config/electrs.toml
@@ -16,6 +15,7 @@ Environment="HOME=/srv/bitcoin"
 Restart=always
 RestartSec=5
 TimeoutStopSec=900
+LimitNOFILE=1048576
 
 User=bitcoin
 Group=bitcoin

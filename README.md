@@ -61,13 +61,13 @@ cd /srv/bitcoin/fullnode/electrs
 cargo build --release --locked
 ```
 
-## 2. Tor Setup
+## 2. Tor Setup (Optional)
 
-Enable and start the system Tor daemon:
+If routing node traffic through Tor is desired, enable and start the Tor daemon:
 ```bash
 sudo systemctl enable tor --now
 ```
-Bitcoin Core connects to the local SOCKS5 proxy on `127.0.0.1:9050` to route peer and hidden service traffic securely.
+By default, Bitcoin Core runs on low-latency clearnet (IPv4 / IPv6) for optimal transaction and RBF propagation speed. Tor can be enabled in `bin/config.py` via `ENABLE_TOR`.
 
 ## 3. Configuration Generation
 
@@ -76,8 +76,8 @@ Generate secure configuration files with owner-only (`0600`) permissions:
 sudo -u bitcoin python3 /srv/bitcoin/fullnode/bin/config.py
 ```
 This generates:
-- `/srv/bitcoin/config/bitcoin.conf`: RPC bound strictly to `127.0.0.1:8332`, allowed IP `127.0.0.1`, public P2P listening on `0.0.0.0:8333`, Tor proxy enabled, and RPC credentials generated with Python `secrets`.
-- `/srv/bitcoin/config/electrs.toml`: Authenticated against local Bitcoin Core RPC on `127.0.0.1:8332`, Electrum RPC bound to `127.0.0.1:50011`, and RocksDB index stored at `/srv/bitcoin/data/electrs_db`.
+- `/srv/bitcoin/config/bitcoin.conf`: Clearnet P2P listening on `0.0.0.0:8333` and `[::]:8333`, 256 connections, 1000 MB mempool, ASMap bucketing, 16 RPC threads, 64 workqueue, RPC bound to `127.0.0.1:8332` with LAN allowed subnet `192.168.0.0/16`, and RPC credentials.
+- `/srv/bitcoin/config/electrs.toml`: Authenticated against local Bitcoin Core RPC on `127.0.0.1:8332`, Electrum RPC on `127.0.0.1:50011`, RocksDB parallelism (`db_parallelism=4`), extended JSON-RPC timeouts (`jsonrpc_timeout_secs=60`), index lookup limits (`index_lookup_limit=1000`), auto-reindex enabled, Prometheus monitoring on `127.0.0.1:4224`, and index stored at `/srv/bitcoin/data/electrs_db`.
 
 Verify permissions:
 ```bash
