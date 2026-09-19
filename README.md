@@ -21,7 +21,7 @@ All node components run inside the `/srv/bitcoin` mountpoint:
     └── service/        # Systemd service and target units
 ```
 
-## 1. Build Instructions
+## Build Instructions
 
 ### Dependencies
 Install build tools and libraries:
@@ -63,13 +63,13 @@ cmake --build build -j$(nproc)
 ```
 
 ### Build Electrs
-Build the release binary with Cargo:
+Build the release binary with Cargo (`CXXFLAGS` ensures RocksDB C++ headers compile on modern GCC):
 ```bash
 cd /srv/bitcoin/fullnode/electrs
-cargo build --release --locked
+CXXFLAGS="-include cstdint" cargo build --release --locked
 ```
 
-## 2. Tor Setup (Optional)
+## Tor Setup (Optional)
 
 If routing node traffic through Tor is desired, enable and start the Tor daemon:
 ```bash
@@ -77,7 +77,7 @@ sudo systemctl enable tor --now
 ```
 By default, Bitcoin Core runs on low-latency clearnet (IPv4 / IPv6) for optimal transaction and RBF propagation speed. Tor can be enabled in `bin/config.py` via `ENABLE_TOR`.
 
-## 3. Configuration Generation
+## Configuration Generation
 
 Generate secure configuration files with owner-only (`0600`) permissions:
 ```bash
@@ -93,7 +93,7 @@ ls -la /srv/bitcoin/config
 # Confirm permissions are -rw------- (0600) owned by bitcoin:bitcoin
 ```
 
-## 4. Install Systemd Services
+## Install Systemd Services
 
 Service units are located in [`service/`](service/):
 - `bitcoin-apps.target`: Coordinates starting and stopping the entire Bitcoin stack.
@@ -110,7 +110,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable bitcoind.service electrs.service
 ```
 
-## 5. Operations & Runbook
+## Operations & Runbook
 
 Because `/srv/bitcoin` is an encrypted volume configured with `noauto` in crypttab and fstab, services do not start automatically at boot.
 
@@ -148,21 +148,7 @@ sudo umount /srv/bitcoin
 sudo systemctl stop systemd-cryptsetup@bitcoin.service
 ```
 
-## 6. Wallet Connection
-
-### Local / LAN via Electrum
-- Raw TCP (loopback): `127.0.0.1:50011:t`
-- SSL via Nginx reverse proxy: `electrs.eniemela.fi:50012:s`
-
-Command-line test:
-```bash
-electrum --oneserver --server 127.0.0.1:50011:t
-```
-
-### Via Tor
-Configure Electrum proxy to `127.0.0.1:9050` (SOCKS5) under Network settings.
-
-## 7. Upgrades
+## Upgrades
 
 ### Upgrading Bitcoin Core
 ```bash
