@@ -33,29 +33,32 @@ sudo pacman -S --needed base-devel cmake boost libevent sqlite python capnproto 
 Build all node components, utilities, wallet, and libraries using CMake:
 ```bash
 cd /srv/bitcoin/fullnode/bitcoin
-cmake -S . -B build \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DENABLE_WALLET=ON \
-  -DBUILD_WALLET_TOOL=ON \
-  -DWITH_ZMQ=ON \
-  -DENABLE_IPC=ON \
-  -DENABLE_EXTERNAL_SIGNER=ON \
-  -DBUILD_BITCOIN_BIN=ON \
-  -DBUILD_DAEMON=ON \
-  -DBUILD_CLI=ON \
-  -DBUILD_TX=ON \
-  -DBUILD_UTIL=ON \
-  -DBUILD_UTIL_CHAINSTATE=ON \
-  -DBUILD_KERNEL_LIB=ON \
-  -DWITH_EMBEDDED_ASMAP=ON \
-  -DWITH_USDT=ON \
-  -DBUILD_TESTS=OFF \
-  -DBUILD_BENCH=OFF \
-  -DBUILD_FUZZ_BINARY=OFF \
-  -DBUILD_GUI=OFF \
-  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-  -DINSTALL_MAN=OFF
 
+cmake_flags=(
+  -DCMAKE_BUILD_TYPE=Release          # Build optimized release binaries
+  -DENABLE_WALLET=ON                  # Enable SQLite descriptor wallet support
+  -DBUILD_WALLET_TOOL=ON              # Build offline wallet tool (bitcoin-wallet) for descriptor inspection
+  -DWITH_ZMQ=ON                       # Enable ZeroMQ notifications (for LND, BTCPay, and external services)
+  -DENABLE_IPC=ON                     # Enable Cap'n Proto multiprocess IPC (builds bitcoin-node)
+  -DENABLE_EXTERNAL_SIGNER=ON         # Enable hardware wallet support (HWI for Ledger, Trezor, Coldcard)
+  -DBUILD_BITCOIN_BIN=ON              # Build unified bitcoin binary runner
+  -DBUILD_DAEMON=ON                   # Build bitcoind server daemon
+  -DBUILD_CLI=ON                      # Build bitcoin-cli RPC client
+  -DBUILD_TX=ON                       # Build bitcoin-tx tool for creating and manipulating raw transactions
+  -DBUILD_UTIL=ON                     # Build bitcoin-util tool
+  -DBUILD_UTIL_CHAINSTATE=ON          # Build experimental bitcoin-chainstate standalone binary
+  -DBUILD_KERNEL_LIB=ON               # Build experimental libbitcoinkernel library
+  -DWITH_EMBEDDED_ASMAP=ON            # Embed standard ASMap data for peer bucketing
+  -DWITH_USDT=ON                      # Enable USDT (User-Space, Statically Defined Tracing) tracepoints
+  -DBUILD_TESTS=OFF                   # Skip unit tests to reduce compile time
+  -DBUILD_BENCH=OFF                   # Skip microbenchmarks
+  -DBUILD_FUZZ_BINARY=OFF             # Skip fuzzing harnesses
+  -DBUILD_GUI=OFF                     # Skip Qt GUI (headless server setup)
+  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON  # Generate compile_commands.json for LSP/tooling
+  -DINSTALL_MAN=OFF                   # Skip installing manual pages
+)
+
+cmake -S . -B build "${cmake_flags[@]}"
 cmake --build build -j$(nproc)
 ```
 
