@@ -13,7 +13,7 @@ All node components run inside the `/srv/bitcoin` mountpoint:
 ├── data/               # Persistent data and indices (mode 0700)
 │   ├── blocks/         # Bitcoin block storage
 │   ├── chainstate/     # Bitcoin UTXO set
-│   └── electrs_db/     # RocksDB Electrs index
+│   └── electrs_db_bindex/     # RocksDB Electrs index
 └── fullnode/           # Repository checkout (mode 0750)
     ├── bin/            # Helper scripts and config generator
     ├── bitcoin/        # Bitcoin Core source and build
@@ -85,7 +85,7 @@ sudo -u bitcoin python3 /srv/bitcoin/fullnode/bin/config.py
 ```
 This generates:
 - `/srv/bitcoin/config/bitcoin.conf`: Clearnet P2P listening on `0.0.0.0:8333` and `[::]:8333`, 256 connections, 1000 MB mempool, ASMap bucketing, wallet enabled (`disablewallet=0`), 16 RPC threads, 64 workqueue, RPC bound to `127.0.0.1:8332` with allowed IP `127.0.0.1`, and RPC credentials.
-- `/srv/bitcoin/config/electrs.toml`: Authenticated against local Bitcoin Core RPC on `127.0.0.1:8332`, Electrum RPC on `127.0.0.1:50011`, RocksDB parallelism (`db_parallelism=4`), extended JSON-RPC timeouts (`jsonrpc_timeout_secs=60`), index lookup limits (`index_lookup_limit=1000`), auto-reindex enabled, Prometheus monitoring on `127.0.0.1:4224`, and index stored at `/srv/bitcoin/data/electrs_db`.
+- `/srv/bitcoin/config/electrs.toml`: Authenticated against local Bitcoin Core RPC on `127.0.0.1:8332`, Electrum RPC on `127.0.0.1:50011`, RocksDB parallelism (`db_parallelism=4`), extended JSON-RPC timeouts (`jsonrpc_timeout_secs=60`), index lookup limits (`index_lookup_limit=1000`), auto-reindex enabled, Prometheus monitoring on `127.0.0.1:4224`, and index stored at `/srv/bitcoin/data/electrs_db_bindex`.
 
 Verify permissions:
 ```bash

@@ -106,7 +106,7 @@ def build_configs(base_dir):
     electrs = [
         ("auth", f'{bitcoindict["rpcuser"]}:{bitcoindict["rpcpassword"]}'),
         ("daemon_rpc_addr", f'127.0.0.1:{bitcoindict["rpcport"]}'),
-        ("db_dir", os.path.join(base_dir, "data", "electrs_db")),
+        ("db_dir", os.path.join(base_dir, "data", "electrs_db_bindex")),
         ("network", "bitcoin"),
         ("electrum_rpc_addr", "127.0.0.1:50011"),
         ("log_filters", "INFO"),
