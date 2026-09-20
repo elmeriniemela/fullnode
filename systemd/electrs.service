@@ -19,7 +19,7 @@ LimitNOFILE=1048576
 
 User=bitcoin
 Group=bitcoin
-UMask=0022
+UMask=0077
 
 # Hardening measures
 # Deny access to /home, /root and /run/user

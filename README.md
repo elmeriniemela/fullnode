@@ -10,7 +10,7 @@ All node components run inside the `/srv/bitcoin` mountpoint:
 ├── config/             # Configuration files (mode 0755, files 0644; elmeri-owned)
 │   ├── bitcoin.conf
 │   └── electrs.toml
-├── data/               # Persistent data and indices (directories 0755, files 0644)
+├── data/               # Persistent data and indices (mode 0700, files 0600)
 │   ├── blocks/         # Bitcoin block storage
 │   ├── chainstate/     # Bitcoin UTXO set
 │   └── electrs_db_bindex/     # RocksDB Electrs index
@@ -68,13 +68,13 @@ sudo mount /srv/bitcoin
 # Layout: config and checkout are maintained by elmeri; services own their data.
 sudo install -d -m 0755 /srv/bitcoin
 sudo install -d -o elmeri -g elmeri -m 0755 /srv/bitcoin/config /srv/bitcoin/fullnode
-sudo install -d -o bitcoin -g bitcoin -m 0755 /srv/bitcoin/data
+sudo install -d -o bitcoin -g bitcoin -m 0700 /srv/bitcoin/data
 ```
 
 Data and runtime permissions overview:
 - `/srv/bitcoin`: mode `0755`, owned by `root:root`.
 - `/srv/bitcoin/config`: mode `0755`, owned by `elmeri:elmeri`. Configuration files are mode `0644`, so the `bitcoin` service user can read them.
-- `/srv/bitcoin/data`: owned by `bitcoin:bitcoin`; directories are mode `0755` and files mode `0644`, making the blockchain and index data readable to all local users.
+- `/srv/bitcoin/data`: owned by `bitcoin:bitcoin`; directories are mode `0700` and files mode `0600`. This matches Bitcoin Core's private `umask(0077)` for runtime data, including RPC cookies and wallets.
 - `/srv/bitcoin/fullnode`: mode `0755`, owned by `elmeri:elmeri`. It contains the source code, compiled binaries, and helper scripts.
 
 ### Dependencies

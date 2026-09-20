@@ -25,7 +25,7 @@ LimitNOFILE=1048576
 # Directory creation and permissions
 User=bitcoin
 Group=bitcoin
-UMask=0022
+UMask=0077
 RuntimeDirectory=bitcoind
 RuntimeDirectoryMode=0710
 
