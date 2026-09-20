@@ -22,6 +22,7 @@ TimeoutStopSec=900
 
 User=bitcoin
 Group=bitcoin
+UMask=0022
 
 # Hardening measures
 ProtectHome=true

@@ -16,7 +16,7 @@ ENABLE_TOR = False
 def save(path, config):
     directory = os.path.dirname(path)
     if directory:
-        os.makedirs(directory, mode=0o700, exist_ok=True)
+        os.makedirs(directory, mode=0o755, exist_ok=True)
 
     if path.endswith(".json"):
         with open(path, "w") as fp:
@@ -36,7 +36,7 @@ def save(path, config):
         with open(path, "w") as fp:
             fp.write(config_str)
 
-    os.chmod(path, 0o600)
+    os.chmod(path, 0o644)
 
 
 def build_configs(base_dir):
@@ -125,7 +125,8 @@ if __name__ == "__main__":
     base_dir = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_BASE_DIR
 
     config_dir = os.path.join(base_dir, "config")
-    os.makedirs(config_dir, mode=0o700, exist_ok=True)
+    os.makedirs(config_dir, mode=0o755, exist_ok=True)
+    os.chmod(config_dir, 0o755)
 
     bitcoin, electrs = build_configs(base_dir)
 
@@ -135,4 +136,4 @@ if __name__ == "__main__":
     save(bitcoin_conf_path, bitcoin)
     save(electrs_toml_path, electrs)
 
-    print(f"Generated configuration files with 0600 permissions in {config_dir}")
+    print(f"Generated configuration files with 0644 permissions in {config_dir}")

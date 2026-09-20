@@ -1,20 +1,20 @@
 # Bitcoin Full Node Stack
 
-Hardened deployment runbook for Bitcoin Core (`bitcoind`) and Electrs on Arch Linux, running on a dedicated encrypted volume mounted at `/srv/bitcoin` under the `bitcoin` system user.
+Deployment runbook for Bitcoin Core (`bitcoind`) and Electrs on Arch Linux, running on a dedicated encrypted volume mounted at `/srv/bitcoin`. The `bitcoin` system user runs services; `elmeri` maintains the configuration and checkout.
 
 ## Directory Layout
 
 All node components run inside the `/srv/bitcoin` mountpoint:
 ```text
 /srv/bitcoin/
-├── config/             # Configuration files (mode 0700, files 0600)
+├── config/             # Configuration files (mode 0755, files 0644; elmeri-owned)
 │   ├── bitcoin.conf
 │   └── electrs.toml
-├── data/               # Persistent data and indices (mode 0700)
+├── data/               # Persistent data and indices (directories 0755, files 0644)
 │   ├── blocks/         # Bitcoin block storage
 │   ├── chainstate/     # Bitcoin UTXO set
 │   └── electrs_db_bindex/     # RocksDB Electrs index
-└── fullnode/           # Repository checkout (mode 0750)
+└── fullnode/           # Repository checkout (mode 0755; elmeri-owned)
     ├── bin/            # Helper scripts and config generator
     ├── bitcoin/        # Bitcoin Core source and build
     ├── electrs/        # Electrs source and build
@@ -65,29 +65,17 @@ sudo systemctl start systemd-cryptsetup@bitcoin.service
 sudo mkdir -p /srv/bitcoin
 sudo mount /srv/bitcoin
 
-# Layout: config, data, and fullnode git checkout
-sudo mkdir -p /srv/bitcoin/config /srv/bitcoin/data /srv/bitcoin/fullnode
-sudo chown -R bitcoin:bitcoin /srv/bitcoin
-sudo chmod 0750 /srv/bitcoin
-sudo chmod 0700 /srv/bitcoin/config /srv/bitcoin/data
+# Layout: config and checkout are maintained by elmeri; services own their data.
+sudo install -d -m 0755 /srv/bitcoin
+sudo install -d -o elmeri -g elmeri -m 0755 /srv/bitcoin/config /srv/bitcoin/fullnode
+sudo install -d -o bitcoin -g bitcoin -m 0755 /srv/bitcoin/data
 ```
 
 Data and runtime permissions overview:
-- `/srv/bitcoin`: mode `0750`, owned by `bitcoin:bitcoin`.
-- `/srv/bitcoin/config`: mode `0700`, owned by `bitcoin:bitcoin`. Secrets (`bitcoin.conf`, `electrs.toml`) mode `0600`.
-- `/srv/bitcoin/data`: mode `0700`, owned by `bitcoin:bitcoin`. Contains blockchain data, chainstate, blocks, and index databases (`electrs_db_bindex`).
-- `/srv/bitcoin/fullnode`: mode `0750`, owned by `bitcoin:bitcoin`. Fullnode source code, compiled binaries, and helper scripts.
-- `/home/elmeri`: mode `0700`, strictly private and unreadable by the `bitcoin` system user.
-
-##### Install Service Units
-```bash
-sudo cp /srv/bitcoin/fullnode/service/bitcoin-apps.target /etc/systemd/system/
-sudo cp /srv/bitcoin/fullnode/service/bitcoind.service /etc/systemd/system/
-sudo cp /srv/bitcoin/fullnode/service/electrs.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable bitcoind.service electrs.service
-```
-
+- `/srv/bitcoin`: mode `0755`, owned by `root:root`.
+- `/srv/bitcoin/config`: mode `0755`, owned by `elmeri:elmeri`. Configuration files are mode `0644`, so the `bitcoin` service user can read them.
+- `/srv/bitcoin/data`: owned by `bitcoin:bitcoin`; directories are mode `0755` and files mode `0644`, making the blockchain and index data readable to all local users.
+- `/srv/bitcoin/fullnode`: mode `0755`, owned by `elmeri:elmeri`. It contains the source code, compiled binaries, and helper scripts.
 
 ### Dependencies
 Install build tools and libraries:
@@ -145,9 +133,9 @@ By default, Bitcoin Core runs on low-latency clearnet (IPv4 / IPv6) for optimal 
 
 ## Configuration Generation
 
-Generate secure configuration files with owner-only (`0600`) permissions:
+Generate configuration files with normal (`0644`) permissions:
 ```bash
-sudo -u bitcoin python3 /srv/bitcoin/fullnode/bin/config.py
+python3 /srv/bitcoin/fullnode/bin/config.py
 ```
 This generates:
 - `/srv/bitcoin/config/bitcoin.conf`: Clearnet P2P listening on `0.0.0.0:8333` and `[::]:8333`, 256 connections, 1000 MB mempool, ASMap bucketing, wallet enabled (`disablewallet=0`), 16 RPC threads, 64 workqueue, RPC bound to `127.0.0.1:8332` with allowed IP `127.0.0.1`, and RPC credentials.
@@ -156,7 +144,7 @@ This generates:
 Verify permissions:
 ```bash
 ls -la /srv/bitcoin/config
-# Confirm permissions are -rw------- (0600) owned by bitcoin:bitcoin
+# Confirm permissions are -rw-r--r-- (0644) owned by elmeri:elmeri
 ```
 
 ## Install Systemd Services
