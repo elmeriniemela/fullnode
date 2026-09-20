@@ -156,12 +156,11 @@ Service units are located in [`systemd/`](systemd/):
 
 Install the units to `/etc/systemd/system/`:
 ```bash
-sudo cp /srv/bitcoin/fullnode/systemd/bitcoin-apps.target /etc/systemd/system/
-sudo cp /srv/bitcoin/fullnode/systemd/bitcoind.service /etc/systemd/system/
-sudo cp /srv/bitcoin/fullnode/systemd/electrs.service /etc/systemd/system/
+sudo install -m 0644 /srv/bitcoin/fullnode/systemd/bitcoin-apps.target /etc/systemd/system/
+sudo install -m 0644 /srv/bitcoin/fullnode/systemd/bitcoind.service /etc/systemd/system/
+sudo install -m 0644 /srv/bitcoin/fullnode/systemd/electrs.service /etc/systemd/system/
 
 sudo systemctl daemon-reload
-sudo systemctl enable bitcoind.service electrs.service
 ```
 
 ## Operations & Runbook
