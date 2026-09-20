@@ -18,7 +18,7 @@ All node components run inside the `/srv/bitcoin` mountpoint:
     ├── bin/            # Helper scripts and config generator
     ├── bitcoin/        # Bitcoin Core source and build
     ├── electrs/        # Electrs source and build
-    └── service/        # Systemd service and target units
+    └── systemd/        # Systemd service and target units
 ```
 
 ## Build Instructions
@@ -95,16 +95,16 @@ ls -la /srv/bitcoin/config
 
 ## Install Systemd Services
 
-Service units are located in [`service/`](service/):
+Service units are located in [`systemd/`](systemd/):
 - `bitcoin-apps.target`: Coordinates starting and stopping the entire Bitcoin stack.
 - `bitcoind.service`: Hardened unit running `bitcoind` under user `bitcoin` with `ProtectHome=true`, `ProtectSystem=strict`, and writable paths restricted to `/srv/bitcoin/data`.
 - `electrs.service`: Hardened unit running `electrs`, ordered after `bitcoind.service`.
 
 Install the units to `/etc/systemd/system/`:
 ```bash
-sudo cp /srv/bitcoin/fullnode/service/bitcoin-apps.target /etc/systemd/system/
-sudo cp /srv/bitcoin/fullnode/service/bitcoind.service /etc/systemd/system/
-sudo cp /srv/bitcoin/fullnode/service/electrs.service /etc/systemd/system/
+sudo cp /srv/bitcoin/fullnode/systemd/bitcoin-apps.target /etc/systemd/system/
+sudo cp /srv/bitcoin/fullnode/systemd/bitcoind.service /etc/systemd/system/
+sudo cp /srv/bitcoin/fullnode/systemd/electrs.service /etc/systemd/system/
 
 sudo systemctl daemon-reload
 sudo systemctl enable bitcoind.service electrs.service
