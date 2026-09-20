@@ -21,15 +21,32 @@ User=bitcoin
 Group=bitcoin
 
 # Hardening measures
+# Deny access to /home, /root and /run/user
 ProtectHome=true
+
+# Mount /usr, /boot/ and /etc read-only for the process.
 ProtectSystem=strict
+
+# Only write data
 ReadWritePaths=/srv/bitcoin/data
+
+# Read code and configs
 ReadOnlyPaths=/srv/bitcoin/config /srv/bitcoin/fullnode
 
+# Provide a private /tmp and /var/tmp.
 PrivateTmp=true
+
+# Use a new /dev namespace only populated with API pseudo devices
+# such as /dev/null, /dev/zero and /dev/random.
 PrivateDevices=true
+
+# Disallow the process and all of its children to gain
+# new privileges through execve().
 NoNewPrivileges=true
+
+# Deny the creation of writable and executable memory mappings.
 MemoryDenyWriteExecute=true
+
 SystemCallArchitectures=native
 SystemCallFilter=@system-service
 CapabilityBoundingSet=
