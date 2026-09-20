@@ -23,6 +23,72 @@ All node components run inside the `/srv/bitcoin` mountpoint:
 
 ## Build Instructions
 
+#### Setup /srv/bitcoin (Encrypted Bitcoin Storage)
+
+The Bitcoin storage is a dedicated LUKS2 + ext4 drive mounted at `/srv/bitcoin`. Its three layers are: LUKS label `luks-bitcoin`, mapper name `bitcoin`, and filesystem label `ext4-bitcoin`.
+
+Partition and format the verified disk:
+```bash
+DEV=/dev/disk/by-id/ata-REPLACE_WITH_VERIFIED_DISK_ID
+PART=/dev/disk/by-id/ata-REPLACE_WITH_VERIFIED_DISK_ID-part1
+sudo parted --script "$DEV" mklabel gpt mkpart primary 1MiB 100%
+sudo partprobe "$DEV"
+sudo cryptsetup luksFormat --label luks-bitcoin "$PART"
+sudo cryptsetup open "$PART" bitcoin
+sudo mkfs.ext4 -L ext4-bitcoin /dev/mapper/bitcoin
+```
+
+Configure `/etc/crypttab` for manual unlock:
+```text
+bitcoin LABEL=luks-bitcoin none noauto,luks
+```
+
+Configure `/etc/fstab` for manual mount:
+```text
+/dev/mapper/bitcoin /srv/bitcoin ext4 noauto,relatime 0 2
+```
+
+Create the dedicated `bitcoin` system user (non-login shell, home `/srv/bitcoin`):
+```bash
+sudo useradd --system \
+  --user-group \
+  --no-create-home \
+  --home-dir /srv/bitcoin \
+  --shell /usr/bin/nologin \
+  bitcoin
+```
+
+Unlock, mount, and establish the directory hierarchy and permissions:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl start systemd-cryptsetup@bitcoin.service
+sudo mkdir -p /srv/bitcoin
+sudo mount /srv/bitcoin
+
+# Layout: config, data, and fullnode git checkout
+sudo mkdir -p /srv/bitcoin/config /srv/bitcoin/data /srv/bitcoin/fullnode
+sudo chown -R bitcoin:bitcoin /srv/bitcoin
+sudo chmod 0750 /srv/bitcoin
+sudo chmod 0700 /srv/bitcoin/config /srv/bitcoin/data
+```
+
+Data and runtime permissions overview:
+- `/srv/bitcoin`: mode `0750`, owned by `bitcoin:bitcoin`.
+- `/srv/bitcoin/config`: mode `0700`, owned by `bitcoin:bitcoin`. Secrets (`bitcoin.conf`, `electrs.toml`) mode `0600`.
+- `/srv/bitcoin/data`: mode `0700`, owned by `bitcoin:bitcoin`. Contains blockchain data, chainstate, blocks, and index databases (`electrs_db_bindex`).
+- `/srv/bitcoin/fullnode`: mode `0750`, owned by `bitcoin:bitcoin`. Fullnode source code, compiled binaries, and helper scripts.
+- `/home/elmeri`: mode `0700`, strictly private and unreadable by the `bitcoin` system user.
+
+##### Install Service Units
+```bash
+sudo cp /srv/bitcoin/fullnode/service/bitcoin-apps.target /etc/systemd/system/
+sudo cp /srv/bitcoin/fullnode/service/bitcoind.service /etc/systemd/system/
+sudo cp /srv/bitcoin/fullnode/service/electrs.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable bitcoind.service electrs.service
+```
+
+
 ### Dependencies
 Install build tools and libraries:
 ```bash
