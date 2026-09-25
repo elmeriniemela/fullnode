@@ -31,3 +31,9 @@
 [submodule "bitoplens"]
 	path = bitoplens
 	url = https://github.com/elmeriniemela/bitoplens
+[submodule "bitcoin-detached-sigs"]
+	path = bitcoin-detached-sigs
+	url = https://github.com/bitcoin-core/bitcoin-detached-sigs.git
+[submodule "guix.sigs"]
+	path = guix.sigs
+	url = https://github.com/bitcoin-core/guix.sigs.git
