@@ -48,6 +48,10 @@ NoNewPrivileges=true
 # Deny the creation of writable and executable memory mappings.
 MemoryDenyWriteExecute=true
 
+# Only allow loopback; electrs talks to bitcoind and its clients via 127.0.0.1.
+IPAddressAllow=localhost
+IPAddressDeny=any
+
 SystemCallArchitectures=native
 SystemCallFilter=@system-service
 CapabilityBoundingSet=

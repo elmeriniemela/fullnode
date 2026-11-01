@@ -152,7 +152,7 @@ ls -la /srv/bitcoin/config
 Service units are located in [`systemd/`](systemd/):
 - `bitcoin-apps.target`: Coordinates starting and stopping the entire Bitcoin stack.
 - `bitcoind.service`: Hardened unit running `bitcoind` under user `bitcoin` with `ProtectHome=true`, `ProtectSystem=strict`, and writable paths restricted to `/srv/bitcoin/data`.
-- `electrs.service`: Hardened unit running `electrs`, ordered after `bitcoind.service`.
+- `electrs.service`: Hardened unit running `electrs`, ordered after `bitcoind.service`. Network access is restricted to localhost with `IPAddressDeny=any`.
 
 Install the units to `/etc/systemd/system/`:
 ```bash
