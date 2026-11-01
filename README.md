@@ -216,6 +216,6 @@ sudo systemctl restart bitcoin-apps.target
 ```bash
 cd /srv/bitcoin/fullnode/electrs
 git pull origin master
-cargo build --release --locked
+CXXFLAGS="-include cstdint" cargo build --release --locked
 sudo systemctl restart electrs.service
 ```
